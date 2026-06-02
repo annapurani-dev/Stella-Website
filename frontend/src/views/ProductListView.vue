@@ -198,6 +198,8 @@ const toggleWishlist = (product) => {
   }
 };
 
+const isMobileFiltersOpen = ref(false);
+
 const categoryBgImages = {
   'smartphones': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1920&q=80',
   'tablets': 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=1920&q=80',
@@ -252,107 +254,140 @@ onMounted(() => {
     </header>
 
     <div class="max-w-7xl mx-auto px-8 mt-16 relative z-10">
-      <div class="flex flex-col lg:flex-row gap-12">
+      <div class="flex flex-col gap-6">
         
-        <!-- Left Filter Sidebar -->
-        <aside class="w-full lg:w-72 shrink-0 space-y-6 animate-fade-up" style="animation-delay: 0.1s">
-            <div class="bg-stella-charcoal/20 border border-white/[0.04] p-7 rounded-3xl space-y-7 shadow-xl">
-                <!-- Header -->
-                <div class="flex items-center justify-between pb-4 border-b border-white/[0.04]">
-                    <span class="text-xs font-black uppercase tracking-[0.2em] text-white">Filter Parameters</span>
-                    <button v-if="hasActiveFilters" 
-                            @click="clearFilters" 
-                            class="text-[10px] font-black uppercase tracking-widest text-stella-red hover:text-white transition-colors">
-                        Reset
-                    </button>
+        <!-- Catalog Search & Sort Controls -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-6 pt-4 animate-fade-up" style="animation-delay: 0.1s">
+            <!-- Search bar -->
+            <div class="relative w-full sm:w-96">
+                <input type="text" 
+                       v-model="searchInput" 
+                       placeholder="Search collection..." 
+                       class="bg-stella-charcoal/30 border border-white/[0.08] text-white rounded-2xl py-4 px-6 focus:border-stella-red/50 focus:bg-stella-black/80 focus:shadow-[0_0_20px_rgba(230,57,70,0.1)] outline-none text-xs font-bold uppercase tracking-wider w-full transition-all" />
+            </div>
+            
+            <div class="flex items-center space-x-4 w-full sm:w-auto">
+                <span class="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] whitespace-nowrap">Sort by:</span>
+                <select v-model="sortBy" 
+                        class="bg-stella-charcoal/30 border border-white/[0.08] text-white rounded-2xl py-4 px-6 focus:border-white/20 focus:bg-stella-black/80 outline-none text-[10px] font-black uppercase tracking-[0.15em] cursor-pointer w-full sm:w-auto transition-all appearance-none pr-10 relative">
+                    <option value="Newest First">Newest First</option>
+                    <option value="Price: Low-High">Price: Low-High</option>
+                    <option value="Price: High-Low">Price: High-Low</option>
+                </select>
+                <!-- Custom chevron for select since appearance is none -->
+                <div class="absolute right-[4.5rem] pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" /></svg>
                 </div>
+            </div>
+        </div>
 
-                <!-- Dynamic Filter Groups -->
-                <div class="space-y-6">
-                    <div v-for="group in activeFiltersConfig" :key="group.name" class="border-b border-white/[0.03] pb-5 last:border-b-0 last:pb-0">
-                        <!-- Group Header with sleek toggling -->
-                        <button @click="toggleGroup(group.key)" 
-                                class="w-full flex items-center justify-between text-left py-1.5 group/btn">
-                            <h4 class="text-[11px] font-bold text-white uppercase tracking-[0.2em] flex items-center">
-                                <span class="w-2.5 h-[2px] bg-stella-red mr-2.5 opacity-60 group-hover/btn:opacity-100 transition-opacity"></span>
-                                {{ group.name }}
-                            </h4>
-                            <svg xmlns="http://www.w3.org/2000/svg" 
-                                 class="h-4.5 w-4.5 text-gray-500 group-hover/btn:text-white transition-all duration-300"
-                                 :class="isGroupOpen(group.key) ? 'rotate-180' : ''"
-                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        
-                        <!-- List Options -->
-                        <div v-show="isGroupOpen(group.key)" class="space-y-3.5 mt-4 pl-4">
-                            <label v-for="option in group.options" :key="option" 
-                                   class="flex items-center space-x-3.5 cursor-pointer group/item text-xs text-gray-500 hover:text-white transition-colors">
-                                <input type="checkbox" 
-                                       :checked="isFilterActive(group.key, option)"
-                                       @change="toggleFilter(group.key, option)"
-                                       class="hidden" />
-                                
-                                <!-- Sleek Circular radio-dot checkbox -->
-                                <div class="w-5 h-5 rounded-full border border-white/10 bg-stella-black/40 flex items-center justify-center transition-all duration-300 relative group-hover/item:border-white/30"
-                                     :class="isFilterActive(group.key, option) ? 'border-stella-red bg-stella-red scale-105 shadow-md shadow-stella-red/20' : ''">
-                                    <span v-if="isFilterActive(group.key, option)" class="w-2 h-2 rounded-full bg-white animate-scale"></span>
-                                </div>
-                                <span class="font-bold uppercase tracking-wider text-[11px] text-gray-400 group-hover/item:text-white transition-colors">{{ option }}</span>
-                            </label>
-                        </div>
+        <!-- Filter Toggle Button & Overlay Drawer -->
+        
+        <!-- Toggle Button (Below Search) -->
+        <div class="pt-2 pb-6 animate-fade-up" style="animation-delay: 0.15s">
+            <button @click.stop="isMobileFiltersOpen = true" 
+                    class="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-3 bg-stella-charcoal/30 border border-white/[0.08] hover:border-stella-red/50 text-white hover:text-stella-red hover:bg-stella-black/80 px-8 py-3.5 rounded-2xl transition-all duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                <span class="text-[10px] font-black uppercase tracking-[0.2em]">Filter Collection</span>
+                <div v-if="hasActiveFilters" class="ml-2 w-2 h-2 rounded-full bg-stella-red animate-pulse shadow-[0_0_8px_rgba(230,57,70,0.8)]"></div>
+            </button>
+        </div>
+
+        <!-- Filter Drawer Overlay -->
+        <Transition name="fade">
+            <div v-if="isMobileFiltersOpen" class="fixed inset-0 z-[80] bg-stella-black/80 backdrop-blur-sm" @click.stop="isMobileFiltersOpen = false"></div>
+        </Transition>
+
+        <!-- Right Filter Drawer (Applies to all screen sizes) -->
+        <aside class="fixed inset-y-0 right-0 z-[90] w-[85%] sm:w-[400px] bg-[#050507]/85 backdrop-blur-3xl border-l border-white/10 p-6 sm:p-8 overflow-y-auto shadow-[-30px_0_60px_rgba(0,0,0,0.8)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+               :class="isMobileFiltersOpen ? 'translate-x-0' : 'translate-x-full'">
+               
+            <!-- Drawer Header -->
+            <div class="flex justify-between items-center mb-8 pb-5 border-b border-white/5">
+                <div class="flex items-center gap-3 flex-1 overflow-hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-stella-red shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+                    <span class="text-[13px] font-black uppercase tracking-[0.2em] text-white truncate">Filters</span>
+                </div>
+                <button @click.stop="isMobileFiltersOpen = false" class="shrink-0 ml-4 px-4 h-10 rounded-full bg-white/5 border border-white/10 flex items-center gap-2 text-gray-400 hover:text-white hover:bg-stella-red hover:border-stella-red transition-all shadow-lg">
+                    <span class="text-[9px] font-black uppercase tracking-widest hidden sm:inline">Close</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+
+            <!-- Parameters Title & Reset -->
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-xs font-black uppercase tracking-[0.2em] text-white">Parameters</span>
+                <button v-if="hasActiveFilters" 
+                        @click="clearFilters" 
+                        class="text-[10px] font-black uppercase tracking-widest text-stella-red hover:text-white transition-colors">
+                    Reset
+                </button>
+            </div>
+
+            <!-- Dynamic Filter Groups -->
+            <div class="space-y-6">
+                <div v-for="group in activeFiltersConfig" :key="group.name" class="border-b border-white/[0.03] pb-6 last:border-b-0 last:pb-0">
+                    <button @click="toggleGroup(group.key)" 
+                            class="w-full flex items-center justify-between text-left py-2 group/btn">
+                        <h4 class="text-[12px] font-bold text-white uppercase tracking-[0.2em] flex items-center">
+                            <span class="w-2.5 h-[2px] bg-stella-red mr-3 opacity-60 group-hover/btn:opacity-100 transition-opacity"
+                                  :class="isGroupOpen(group.key) ? 'opacity-100 w-4' : ''"></span>
+                            {{ group.name }}
+                        </h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                             class="h-5 w-5 text-gray-500 group-hover/btn:text-white transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                             :class="isGroupOpen(group.key) ? 'rotate-180 text-white' : ''"
+                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    
+                    <div v-show="isGroupOpen(group.key)" class="space-y-4 mt-5 pl-4">
+                        <label v-for="option in group.options" :key="option" 
+                               class="flex items-center space-x-4 cursor-pointer group/item text-[13px] text-gray-400 hover:text-white transition-colors">
+                            <input type="checkbox" :checked="isFilterActive(group.key, option)" @change="toggleFilter(group.key, option)" class="hidden" />
+                            <div class="w-5 h-5 rounded-full border border-white/10 bg-black/40 flex items-center justify-center transition-all duration-300 relative group-hover/item:border-white/30 shrink-0"
+                                 :class="isFilterActive(group.key, option) ? 'border-stella-red bg-stella-red scale-110 shadow-[0_0_15px_rgba(230,57,70,0.4)]' : ''">
+                                <span v-if="isFilterActive(group.key, option)" class="w-2 h-2 rounded-full bg-white animate-scale"></span>
+                            </div>
+                            <span class="font-bold uppercase tracking-wider text-[11px] transition-colors"
+                                  :class="isFilterActive(group.key, option) ? 'text-white' : 'text-gray-400 group-hover/item:text-gray-200'">{{ option }}</span>
+                        </label>
                     </div>
                 </div>
+            </div>
 
-                <!-- Fallback info -->
-                <div v-if="activeFiltersConfig.length === 0" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider leading-relaxed p-4 bg-white/[0.01] border border-white/[0.03] rounded-xl text-center">
-                    Select a dynamic category in the header menu to load specifications parameters filters.
-                </div>
+            <div v-if="activeFiltersConfig.length === 0" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider leading-relaxed p-4 bg-white/[0.01] border border-white/[0.03] rounded-xl text-center mt-4">
+                Select a dynamic category in the header menu to load specifications parameters filters.
             </div>
         </aside>
 
-        <!-- Right Catalog Products Area -->
-        <div class="flex-1 space-y-6">
-            <!-- Catalog Search & Sort Controls (Clean Spacious Integration) -->
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-6 pb-6 border-b border-white/[0.03] animate-fade-up" style="animation-delay: 0.15s">
-                <!-- Search bar -->
-                <div class="relative w-full sm:w-80">
-                    <input type="text" 
-                           v-model="searchInput" 
-                           placeholder="Search collection..." 
-                           class="bg-stella-charcoal/20 border border-white/[0.04] text-white rounded-xl py-3 px-5 focus:border-white/20 focus:bg-stella-black/60 outline-none text-xs font-semibold uppercase tracking-wider w-full transition-all" />
+        <!-- Floating Active Dismissible Pill Badges -->
+        <div v-if="hasActiveFilters" class="flex flex-wrap items-center gap-2 pb-8 border-b border-white/[0.03] animate-fade-up" style="animation-delay: 0.3s">
+            <span class="text-[9px] text-gray-500 font-black uppercase tracking-widest mr-2">Active:</span>
+            <template v-for="(options, key) in selectedFilters" :key="key">
+                <div v-for="opt in options" :key="opt"
+                     class="bg-stella-red/10 border border-stella-red/30 text-stella-red pl-4 pr-1.5 py-1.5 rounded-full flex items-center gap-2 transition-all text-[9px] font-black uppercase tracking-[0.1em] shadow-[0_0_10px_rgba(230,57,70,0.1)]">
+                    <span>{{ opt }}</span>
+                    <button @click="toggleFilter(key, opt)" class="w-5 h-5 rounded-full flex items-center justify-center hover:bg-stella-red hover:text-white transition-colors">
+                        <span class="text-[10px] leading-none">×</span>
+                    </button>
                 </div>
-                
-                <div class="flex items-center space-x-4 w-full sm:w-auto">
-                    <span class="text-xs text-gray-500 font-bold uppercase tracking-wider whitespace-nowrap">Sort by:</span>
-                    <select v-model="sortBy" 
-                            class="bg-stella-charcoal/20 border border-white/[0.04] text-white rounded-xl py-3.5 px-5 focus:border-white/20 focus:bg-stella-black/60 outline-none text-xs font-bold uppercase tracking-wider cursor-pointer w-full sm:w-auto transition-all">
-                        <option value="Newest First">Newest First</option>
-                        <option value="Price: Low-High">Price: Low-High</option>
-                        <option value="Price: High-Low">Price: High-Low</option>
-                    </select>
-                </div>
-            </div>
+            </template>
+            <button @click="clearFilters" class="text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white ml-4 transition-colors underline decoration-white/20 hover:decoration-white underline-offset-4">
+                Clear All
+            </button>
+        </div>
+        <div v-else class="border-b border-white/[0.03] pb-8"></div>
 
-            <!-- Floating Active Dismissible Pill Badges -->
-            <div v-if="hasActiveFilters" class="flex flex-wrap gap-2 py-1 animate-fade-up">
-                <template v-for="(options, key) in selectedFilters" :key="key">
-                    <div v-for="opt in options" :key="opt"
-                         class="bg-white/[0.03] border border-white/10 text-white pl-3.5 pr-2 py-1 rounded-full flex items-center gap-2 hover:border-white/20 transition-all text-[9px] font-bold uppercase tracking-wider">
-                        <span>{{ opt }}</span>
-                        <button @click="toggleFilter(key, opt)" class="w-4 h-4 rounded-full bg-white/5 flex items-center justify-center hover:bg-stella-red hover:text-white transition-colors">
-                            <span class="text-[8px] leading-none">×</span>
-                        </button>
-                    </div>
-                </template>
-            </div>
+        <!-- Right Catalog Products Area (Now Full Width) -->
+        <div class="w-full space-y-6">
             <!-- Products Grid — Minimal Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-3 sm:gap-5">
 
                 <!-- Loading Skeletons -->
                 <div v-if="loading" v-for="i in 6" :key="i"
-                     class="h-[380px] bg-white/[0.02] rounded-2xl border border-white/[0.03] animate-pulse"></div>
+                     class="h-[260px] sm:h-[380px] bg-white/[0.02] rounded-2xl border border-white/[0.03] animate-pulse"></div>
 
                 <!-- Product Cards -->
                 <article v-else v-for="product in filteredProducts" :key="product.id"
@@ -362,20 +397,31 @@ onMounted(() => {
                             transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]">
 
                   <!-- Image -->
-                  <div class="relative bg-[#111114] overflow-hidden" style="height: 260px;">
+                  <div class="relative bg-[#111114] overflow-hidden h-[160px] sm:h-[260px]">
                     <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_55%,rgba(230,57,70,0.05)_0%,transparent_70%)]
                                 opacity-0 group-hover:opacity-100 transition-opacity duration-600 z-0"></div>
                     
-                    <!-- Wishlist Toggle -->
-                    <button @click.stop="toggleWishlist(product)" 
-                            class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-stella-black/75 border border-white/10 flex items-center justify-center backdrop-blur-md hover:border-stella-red/50 hover:bg-stella-black transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" 
-                             class="h-4.5 w-4.5 transition-all"
-                             :class="wishlistStore.isInWishlist(product.id) ? 'fill-stella-red text-stella-red scale-110' : 'text-gray-400'"
-                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                    </button>
+                    <!-- Action Buttons Container (Top Right) -->
+                    <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 flex flex-col items-center gap-2">
+                        <!-- Wishlist Toggle -->
+                        <button @click.stop="toggleWishlist(product)" title="Toggle Wishlist"
+                                class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-stella-black/75 border border-white/10 flex items-center justify-center backdrop-blur-md hover:border-stella-red/50 hover:bg-stella-black transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" 
+                                 class="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 transition-all"
+                                 :class="wishlistStore.isInWishlist(product.id) ? 'fill-stella-red text-stella-red scale-110' : 'text-gray-400'"
+                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </button>
+                        
+                        <!-- Add to Cart -->
+                        <button @click.stop="addToCart(product)" title="Add to Cart"
+                                class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-stella-black/75 border border-white/10 flex items-center justify-center backdrop-blur-md hover:border-stella-red/50 hover:bg-stella-black transition-all text-white hover:text-stella-red">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </button>
+                    </div>
 
                     <img :src="product.img" :alt="product.name"
                          class="absolute inset-0 m-auto object-contain z-10
@@ -383,26 +429,14 @@ onMounted(() => {
                                 group-hover:scale-[1.06]
                                 drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)]"
                          style="max-height: 220px; max-width: 80%;" />
-
-                    <!-- Add to Cart Sliding Panel -->
-                    <div class="absolute bottom-0 left-0 right-0 z-20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] bg-stella-black/90 border-t border-white/10 p-3 backdrop-blur-md flex items-center justify-center">
-                        <button @click.stop="addToCart(product)" 
-                                class="stella-button w-full bg-stella-red text-white py-2 rounded-xl font-bold uppercase tracking-widest text-[9px] hover:bg-red-700 transition-colors shadow-lg shadow-stella-red/20 flex items-center justify-center space-x-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                            </svg>
-                            <span>Add To Cart</span>
-                        </button>
-                    </div>
                   </div>
 
                   <!-- Info -->
-                  <div class="px-5 py-4 flex items-center justify-between border-t border-white/[0.04]">
-                    <h3 class="text-[13px] font-bold uppercase tracking-tight text-white
-                               group-hover:text-stella-red transition-colors duration-300 truncate flex-1 pr-3 font-display">
+                  <div class="px-3 py-3 sm:px-5 sm:py-4 flex flex-col justify-center border-t border-white/[0.04] bg-[#0c0c0f]">
+                    <h3 class="text-[10px] sm:text-[13px] font-bold uppercase tracking-tight text-white group-hover:text-stella-red transition-colors duration-300 truncate font-display">
                       {{ product.name }}
                     </h3>
-                    <p class="text-[13px] font-black text-white shrink-0">
+                    <p class="text-[11px] sm:text-[13px] font-black text-gray-400 mt-0.5">
                       ₹{{ Number(product.price).toLocaleString('en-IN') }}
                     </p>
                   </div>

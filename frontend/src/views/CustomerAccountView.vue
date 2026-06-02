@@ -14,6 +14,12 @@ const route = useRoute();
 
 // Tab system
 const activeTab = ref('profile');
+const isMobileTabMenuOpen = ref(false);
+const tabs = [
+    {id: 'profile', label: 'Profile'},
+    {id: 'tracking', label: 'Tracking Details'},
+    {id: 'orders', label: 'Order History'}
+];
 
 // States
 const orders = ref([]);
@@ -393,19 +399,50 @@ const handleLogout = () => {
     </section>
 
     <div class="max-w-7xl mx-auto px-6 mt-16">
-      <!-- Tab Navigation (Horizontal futuristic selector identical to Admin Dashboard UI, highly polished) -->
-      <div class="flex justify-center md:justify-start mb-16 animate-fade-up" style="animation-delay: 0.2s">
-          <div class="flex items-center space-x-1 p-2 bg-[#09090b]/80 backdrop-blur-3xl rounded-[1.5rem] border border-white/[0.08] w-fit shadow-2xl shadow-black/80 relative">
-              <button v-for="tab in [
-                  {id: 'profile', label: 'Profile'},
-                  {id: 'tracking', label: 'Tracking Details'},
-                  {id: 'orders', label: 'Order History'}
-              ]" :key="tab.id"
+      <!-- Tab Navigation (Premium Adaptive Layout: Dropdown on Mobile, Horizontal on Desktop) -->
+      <div class="w-full mb-12 md:mb-16 animate-fade-up relative z-[60]" style="animation-delay: 0.2s">
+          
+          <!-- Mobile Dropdown Selector -->
+          <div class="md:hidden relative">
+              <button @click="isMobileTabMenuOpen = !isMobileTabMenuOpen" 
+                      class="w-full flex items-center justify-between p-5 bg-[#09090b]/90 backdrop-blur-3xl rounded-2xl border border-white/[0.08] shadow-2xl shadow-black/80">
+                  <div class="flex items-center gap-3">
+                      <span class="font-black uppercase tracking-[0.2em] text-[11px] text-white">
+                          {{ tabs.find(t => t.id === activeTab)?.label || 'Menu' }}
+                      </span>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 transition-transform duration-300" :class="isMobileTabMenuOpen ? 'rotate-180 text-white' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                  </svg>
+              </button>
+              
+              <!-- Dropdown Menu List -->
+              <Transition name="fade">
+                  <div v-if="isMobileTabMenuOpen" class="absolute top-full left-0 right-0 mt-3 p-2 bg-[#0c0c0f]/95 backdrop-blur-3xl border border-white/10 rounded-[1.25rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-50 flex flex-col gap-1 overflow-hidden origin-top">
+                      <button v-for="tab in tabs" :key="tab.id"
+                              @click="activeTab = tab.id; isMobileTabMenuOpen = false"
+                              class="w-full flex items-center justify-between px-5 py-4 rounded-xl transition-all"
+                              :class="activeTab === tab.id ? 'bg-stella-red/10 border-stella-red/30' : 'hover:bg-white/[0.04]'">
+                          <span class="font-black uppercase tracking-[0.2em] text-[10px]"
+                                :class="activeTab === tab.id ? 'text-stella-red' : 'text-gray-400'">
+                              {{ tab.label }}
+                          </span>
+                          <svg v-if="activeTab === tab.id" xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-stella-red" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                          </svg>
+                      </button>
+                  </div>
+              </Transition>
+          </div>
+
+          <!-- Desktop Horizontal Selector -->
+          <div class="hidden md:flex items-center space-x-1 p-2 bg-[#09090b]/80 backdrop-blur-3xl rounded-[2rem] border border-white/[0.08] shadow-2xl shadow-black/80 w-auto max-w-fit mx-auto">
+              <button v-for="tab in tabs" :key="tab.id"
               @click="activeTab = tab.id"
-              class="px-10 py-4.5 rounded-[1.15rem] font-black uppercase tracking-[0.25em] text-[10px] md:text-xs transition-all duration-500 cursor-pointer select-none active:scale-95"
+              class="px-10 py-4.5 rounded-[1.15rem] font-black uppercase tracking-[0.25em] text-xs transition-all duration-400 cursor-pointer select-none active:scale-[0.98] text-center"
               :class="activeTab === tab.id 
-                  ? 'bg-white text-black shadow-[0_4px_25px_rgba(255,255,255,0.18)] scale-[1.03] font-black' 
-                  : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'">
+                  ? 'bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.15)] scale-[1.03] font-black' 
+                  : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'">
                   {{ tab.label }}
               </button>
           </div>
@@ -421,7 +458,6 @@ const handleLogout = () => {
             <div class="space-y-8">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-black uppercase tracking-[0.2em] text-white flex items-center gap-3">
-                        <span class="w-2 h-2 rounded-full bg-stella-red animate-pulse"></span>
                         Profile Details
                     </h2>
                 </div>
@@ -528,7 +564,6 @@ const handleLogout = () => {
           <div v-if="activeTab === 'tracking'" class="space-y-10 animate-fade-in">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-black uppercase tracking-[0.2em] text-white flex items-center gap-3">
-                    <span class="w-2 h-2 rounded-full bg-stella-red animate-pulse"></span>
                     Tracking Details
                 </h2>
                 <span class="text-[9px] font-bold text-gray-500 uppercase tracking-[0.3em]">{{ activeOrders.length }} active order{{ activeOrders.length !== 1 ? 's' : '' }}</span>
@@ -698,7 +733,6 @@ const handleLogout = () => {
           <div v-if="activeTab === 'orders'" class="space-y-12 animate-fade-in">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-black uppercase tracking-[0.2em] text-white flex items-center gap-3">
-                        <span class="w-2 h-2 rounded-full bg-stella-gold animate-pulse"></span>
                         Order History
                     </h2>
                     <span class="text-[9px] font-black text-gray-500 uppercase tracking-[0.3em]">Past Orders</span>

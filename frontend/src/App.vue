@@ -17,6 +17,7 @@ const { isAuthenticated, user, showLoginModal } = storeToRefs(authStore)
 const { totalItems } = storeToRefs(cartStore)
 
 const showCart = ref(false)
+const isMobileMenuOpen = ref(false)
 
 const handleAccountClick = () => {
   if (isAuthenticated.value) {
@@ -125,8 +126,8 @@ const footerSections = computed(() => {
         </RouterLink>
       </nav>
       
-      <!-- Icons -->
-      <div class="flex items-center space-x-6">
+      <!-- Icons & Mobile Menu Toggle -->
+      <div class="flex items-center space-x-4 md:space-x-6">
         <button @click="handleAccountClick" class="flex items-center space-x-2 group">
           <div class="w-9 h-9 rounded-full bg-stella-gray border border-white/5 flex items-center justify-center group-hover:border-stella-red/50 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
@@ -139,9 +140,40 @@ const footerSections = computed(() => {
           </div>
           <span v-if="totalItems > 0" class="absolute -top-1 -right-1 bg-stella-red text-white text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full border-2 border-stella-black animate-pulse">{{ totalItems }}</span>
         </button>
+        <!-- Mobile Hamburger Menu Button -->
+        <button @click="isMobileMenuOpen = true" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-stella-gray border border-white/5 text-gray-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <Transition name="fade">
+    <div v-if="isMobileMenuOpen" class="fixed inset-0 z-[60] bg-stella-black/80 backdrop-blur-md md:hidden" @click="isMobileMenuOpen = false"></div>
+  </Transition>
+
+  <Transition name="slide-right">
+    <div v-if="isMobileMenuOpen" class="fixed inset-y-0 right-0 z-[70] w-[80%] max-w-sm bg-[#0d0d10] border-l border-white/10 shadow-[-20px_0_50px_rgba(0,0,0,0.5)] md:hidden flex flex-col">
+      <div class="flex justify-between items-center p-6 border-b border-white/5">
+        <div class="flex flex-col items-start">
+          <img src="/logo2.jpeg" alt="Stella" class="h-10 object-contain mix-blend-screen" style="filter: brightness(1.2) contrast(1.1);" />
+          <span class="text-stella-gold font-bold text-[10px] uppercase tracking-[0.3em] leading-none mt-1">Mobiles</span>
+        </div>
+        <button @click="isMobileMenuOpen = false" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 border border-white/10 hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto px-6 py-8 space-y-3 custom-scrollbar">
+        <RouterLink v-for="link in navLinks" :key="link.name" :to="getNavLinkPath(link.name)"
+          @click="(e) => { handleNavClick(e, link.path); isMobileMenuOpen = false; }"
+          class="flex items-center space-x-4 text-sm font-black uppercase tracking-widest text-gray-300 hover:text-white bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.02] hover:border-stella-red/50 px-5 py-4 rounded-xl transition-all group">
+          <span class="w-1.5 h-1.5 rounded-full bg-stella-red group-hover:shadow-[0_0_10px_rgba(229,9,20,0.8)] transition-shadow"></span>
+          <span>{{ link.name }}</span>
+        </RouterLink>
+      </div>
+    </div>
+  </Transition>
 
   <main class="pt-20">
     <RouterView />
@@ -193,5 +225,24 @@ const footerSections = computed(() => {
   max-width: 100% !important;
   padding: 0 !important;
   display: block !important;
+}
+
+/* Mobile Drawer Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.slide-right-enter-from,
+.slide-right-leave-to {
+  transform: translateX(100%);
 }
 </style>

@@ -334,7 +334,7 @@ onUnmounted(() => {
             <span class="text-white font-black text-[10px] uppercase tracking-[0.3em]">{{ slide.subtitle || 'New Arrival' }}</span>
           </div>
           
-          <h1 class="text-7xl md:text-[10rem] font-black uppercase tracking-tighter mb-10 leading-[0.85] animate-fade-up" style="animation-delay: 0.1s">
+          <h1 class="text-5xl sm:text-6xl md:text-[10rem] font-black uppercase tracking-tighter mb-10 leading-[0.85] animate-fade-up" style="animation-delay: 0.1s">
             {{ slide.title.split(' ')[0] }} <br />
             <span class="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/20 drop-shadow-2xl">{{ slide.title.split(' ').slice(1).join(' ') }}</span>
           </h1>
@@ -365,7 +365,7 @@ onUnmounted(() => {
     <section v-else class="relative h-[92vh] flex items-center justify-center overflow-hidden">
       <div class="absolute inset-0"></div>
       <div class="relative z-20 text-center max-w-4xl px-6">
-        <h1 class="text-9xl font-black uppercase tracking-tighter text-white animate-fade-up">Stella <br/><span class="text-stella-red">Future</span></h1>
+        <h1 class="text-6xl md:text-9xl font-black uppercase tracking-tighter text-white animate-fade-up">Stella <br/><span class="text-stella-red">Future</span></h1>
         <button @click="$router.push('/products')" class="mt-12 bg-stella-red text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest animate-fade-up">Enter Galaxy</button>
       </div>
     </section>
@@ -776,7 +776,8 @@ onUnmounted(() => {
             <!-- Bottom Fade Overlay -->
             <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-stella-black via-stella-black/70 to-transparent z-20 pointer-events-none"></div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+            <!-- Desktop: 3-Column Vertical Scrolling Bento Grid -->
+            <div class="hidden md:grid grid-cols-3 gap-6 h-full">
                 <!-- Column 1 (Scrolling Up) -->
                 <div class="reviews-column overflow-hidden h-full relative p-3">
                     <div class="flex flex-col gap-4 animate-marquee-vertical-up">
@@ -851,6 +852,49 @@ onUnmounted(() => {
                         </div>
                         <!-- Duplicated for seamless scrolling -->
                         <div v-for="review in col3Reviews" :key="'dup-'+review.id" class="review-card glass p-5 rounded-2xl border border-white/5 space-y-3 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-12 h-12 bg-white/[0.01] rounded-full blur-lg"></div>
+                            <div class="flex space-x-0.5 text-[9px] text-stella-gold">
+                                <span v-for="s in review.stars" :key="s">★</span>
+                            </div>
+                            <p class="text-gray-300 text-xs italic font-medium leading-relaxed">"{{ review.text }}"</p>
+                            <div class="flex items-center space-x-3 pt-3 border-t border-white/5">
+                                <div class="w-8 h-8 rounded-full bg-stella-red/10 border border-stella-red/20 flex items-center justify-center text-stella-red font-black text-[9px]">{{ review.name[0] }}</div>
+                                <span class="text-white font-black uppercase tracking-widest text-[9px]">{{ review.name }}</span>
+                            </div>
+                        </div>
+                        <!-- Duplicated for seamless scrolling -->
+                        <div v-for="review in col3Reviews" :key="'dup-'+review.id" class="review-card glass p-5 rounded-2xl border border-white/5 space-y-3 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-12 h-12 bg-white/[0.01] rounded-full blur-lg"></div>
+                            <div class="flex space-x-0.5 text-[9px] text-stella-gold">
+                                <span v-for="s in review.stars" :key="s">★</span>
+                            </div>
+                            <p class="text-gray-300 text-xs italic font-medium leading-relaxed">"{{ review.text }}"</p>
+                            <div class="flex items-center space-x-3 pt-3 border-t border-white/5">
+                                <div class="w-8 h-8 rounded-full bg-stella-red/10 border border-stella-red/20 flex items-center justify-center text-stella-red font-black text-[9px]">{{ review.name[0] }}</div>
+                                <span class="text-white font-black uppercase tracking-widest text-[9px]">{{ review.name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile: Single Combined Column Scrolling Up -->
+            <div class="grid md:hidden grid-cols-1 gap-6 h-full">
+                <div class="reviews-column overflow-hidden h-full relative p-3">
+                    <div class="flex flex-col gap-4 animate-marquee-vertical-up">
+                        <div v-for="review in [...col1Reviews, ...col2Reviews, ...col3Reviews]" :key="review.id" class="review-card glass p-5 rounded-2xl border border-white/5 space-y-3 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-12 h-12 bg-white/[0.01] rounded-full blur-lg"></div>
+                            <div class="flex space-x-0.5 text-[9px] text-stella-gold">
+                                <span v-for="s in review.stars" :key="s">★</span>
+                            </div>
+                            <p class="text-gray-300 text-xs italic font-medium leading-relaxed">"{{ review.text }}"</p>
+                            <div class="flex items-center space-x-3 pt-3 border-t border-white/5">
+                                <div class="w-8 h-8 rounded-full bg-stella-red/10 border border-stella-red/20 flex items-center justify-center text-stella-red font-black text-[9px]">{{ review.name[0] }}</div>
+                                <span class="text-white font-black uppercase tracking-widest text-[9px]">{{ review.name }}</span>
+                            </div>
+                        </div>
+                        <!-- Duplicated for seamless scrolling -->
+                        <div v-for="review in [...col1Reviews, ...col2Reviews, ...col3Reviews]" :key="'dup-'+review.id" class="review-card glass p-5 rounded-2xl border border-white/5 space-y-3 relative overflow-hidden">
                             <div class="absolute top-0 right-0 w-12 h-12 bg-white/[0.01] rounded-full blur-lg"></div>
                             <div class="flex space-x-0.5 text-[9px] text-stella-gold">
                                 <span v-for="s in review.stars" :key="s">★</span>

@@ -189,7 +189,7 @@ const handleRazorpayCancel = () => {
                 <h2 class="text-xl font-black uppercase tracking-widest text-white">Delivery Method</h2>
             </div>
             
-            <div class="flex space-x-4">
+            <div class="flex flex-col sm:flex-row gap-4">
               <div @click="shippingMethod = 'delivery'" 
                    class="stella-card px-6 py-5 cursor-pointer flex-1 flex items-center justify-center space-x-4 transition-all duration-300 rounded-2xl border"
                    :class="shippingMethod === 'delivery' ? 'bg-stella-red/10 border-stella-red shadow-[0_0_20px_rgba(229,9,20,0.2)]' : 'bg-stella-black/50 border-white/5 hover:border-white/20'">

@@ -187,7 +187,7 @@ onUnmounted(() => {
 
       <!-- Image Gallery -->
       <div>
-        <div class="bg-[#0e0e11] rounded-2xl border border-white/[0.05] h-[460px] flex items-center justify-center mb-4 relative overflow-hidden">
+        <div class="bg-[#0e0e11] rounded-2xl border border-white/[0.05] h-[320px] lg:h-[380px] flex items-center justify-center mb-4 relative overflow-hidden">
           <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(230,57,70,0.04)_0%,transparent_70%)]"></div>
           
           <!-- Wishlist Toggle -->
@@ -202,7 +202,7 @@ onUnmounted(() => {
           </button>
 
           <img :src="product.images[activeImage]" :alt="product.name"
-               class="max-h-[85%] max-w-[80%] object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] transition-all duration-500 relative z-10" />
+               class="max-h-[90%] max-w-[90%] object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] transition-all duration-500 relative z-10" />
         </div>
         <div v-if="product.images.length > 1" class="flex gap-3">
           <div v-for="(img, idx) in product.images" :key="idx"
@@ -215,14 +215,14 @@ onUnmounted(() => {
       </div>
 
       <!-- Product Info -->
-      <div class="flex flex-col justify-center space-y-6">
-        <h1 class="text-4xl lg:text-5xl font-black uppercase tracking-tighter text-white leading-tight">{{ product.name }}</h1>
+      <div class="flex flex-col justify-center space-y-5">
+        <h1 class="text-3xl lg:text-4xl font-black uppercase tracking-tighter text-white leading-tight">{{ product.name }}</h1>
 
-        <p class="text-3xl font-black text-white">
+        <p class="text-2xl font-black text-white">
           ₹{{ Number(product.price).toLocaleString('en-IN') }}
         </p>
 
-        <p class="text-gray-400 font-light leading-relaxed text-sm border-b border-white/[0.05] pb-6">
+        <p class="text-gray-300 font-medium leading-relaxed text-base border-b border-white/[0.05] pb-5">
           {{ product.description }}
         </p>
 
@@ -239,18 +239,19 @@ onUnmounted(() => {
                       class="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 transition-colors font-bold text-base">+</button>
             </div>
 
-            <!-- Add to Cart -->
-            <button @click="addToCart" :disabled="product.stock_quantity <= 0"
-                    class="flex-1 text-white py-2.5 rounded-xl font-black uppercase tracking-[0.2em] text-[10px] transition-all"
-                    :class="product.stock_quantity <= 0 ? 'bg-white/10 cursor-not-allowed opacity-50' : 'bg-stella-red hover:bg-red-700 shadow-lg shadow-stella-red/20 active:scale-[0.98]'">
-              {{ product.stock_quantity <= 0 ? 'Out of Stock' : 'Add to Cart' }}
+            <!-- Add to Cart (Icon only) -->
+            <button @click="addToCart" :disabled="product.stock_quantity <= 0" title="Add to Cart"
+                    class="h-9 w-12 flex items-center justify-center rounded-xl transition-all"
+                    :class="product.stock_quantity <= 0 ? 'bg-white/10 cursor-not-allowed opacity-50' : 'bg-stella-red text-white hover:bg-red-700 shadow-lg shadow-stella-red/20 active:scale-[0.98]'">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
             </button>
 
             <!-- Buy Now -->
             <button @click="buyNow" :disabled="product.stock_quantity <= 0"
-                    class="flex-1 bg-white/[0.04] border border-white/[0.08] text-white py-2.5 rounded-xl font-black uppercase tracking-[0.2em] text-[10px] transition-all"
+                    class="flex-1 bg-white/[0.04] border border-white/[0.08] text-white py-2.5 px-4 rounded-xl font-black uppercase tracking-[0.2em] text-[10px] transition-all flex items-center justify-center gap-2"
                     :class="product.stock_quantity <= 0 ? 'cursor-not-allowed opacity-50' : 'hover:bg-white hover:text-black active:scale-[0.98]'">
-              {{ product.stock_quantity <= 0 ? 'Unavailable' : 'Buy Now' }}
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              <span>{{ product.stock_quantity <= 0 ? 'Unavailable' : 'Buy Now' }}</span>
             </button>
           </div>
         </div>
