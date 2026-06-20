@@ -54,8 +54,8 @@ router.put('/:key', async (req, res) => {
     
     const result = await pool.query(
       `INSERT INTO site_config (config_key, config_value) 
-       VALUES ($1, CAST($2 AS JSON)) 
-       ON DUPLICATE KEY UPDATE config_value = CAST($2 AS JSON), updated_at = CURRENT_TIMESTAMP`,
+       VALUES ($1, $2) 
+       ON DUPLICATE KEY UPDATE config_value = VALUES(config_value), updated_at = CURRENT_TIMESTAMP`,
       [key, JSON.stringify(value)]
     );
     

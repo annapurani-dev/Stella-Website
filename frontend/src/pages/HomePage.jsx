@@ -69,10 +69,14 @@ function parseMaybeJson(value) {
 }
 
 const defaultHubs = [
-  { tag: 'Flagship Hub', name: 'Stella Anna Nagar', address: 'Shanthi Colony Main Rd, Anna Nagar, Chennai - 400040', phone: '+91 44 2626 XXXX', hours: '10 AM - 9 PM' },
-  { tag: 'Express Hub', name: 'Stella T-Nagar', address: 'Pondy Bazaar Main Rd, T-Nagar, Chennai - 400017', phone: '+91 44 2828 XXXX', hours: '10 AM - 9 PM' },
-  { tag: 'Premium Hub', name: 'Stella Adyar', address: 'MG Road, Shastri Nagar, Adyar, Chennai - 400020', phone: '+91 44 2424 XXXX', hours: '10 AM - 9 PM' },
-  { tag: 'Tech Hub', name: 'Stella Velachery', address: 'Bypass Road, Velachery, Chennai - 400042', phone: '+91 44 2929 XXXX', hours: '10 AM - 9 PM' },
+  { tag: 'Own Outlet', name: 'Unit I, Hongkong Plaza', address: 'Tuticorin', phone: '+91 90 95 510510', hours: '10 AM - 9 PM' },
+  { tag: 'Own Outlet', name: 'Unit II, Hongkong Plaza', address: 'Tuticorin', phone: '+91 90 95 510510', hours: '10 AM - 9 PM' },
+  { tag: 'Own Outlet', name: 'Thalamuthunagar', address: 'Tuticorin', phone: '+91 90 95 510510', hours: '10 AM - 9 PM' },
+  { tag: 'Own Outlet', name: 'Chidambara Nagar', address: 'Tuticorin', phone: '+91 90 95 510510', hours: '10 AM - 9 PM' },
+  { tag: 'Own Outlet', name: 'Kulathur', address: 'Tuticorin', phone: '+91 90 95 510510', hours: '10 AM - 9 PM' },
+  { tag: 'Franchise Outlet', name: 'Pudukottai', address: 'Pudukottai', phone: '+91 90 95 510510', hours: '10 AM - 9 PM' },
+  { tag: 'Franchise Outlet', name: 'Kulathur', address: 'Kulathur', phone: '+91 90 95 510510', hours: '10 AM - 9 PM' },
+  { tag: 'Franchise Outlet', name: 'MR.93 Thoothukudi', address: 'Thoothukudi', phone: '+91 90 95 510510', hours: '10 AM - 9 PM' },
 ];
 
 const defaultCol1Reviews = [
@@ -140,12 +144,12 @@ const franchiseBentoItems = [
 ];
 
 const franchiseModalBenefits = [
-  { icon: '🏪', title: 'Zero Franchise Fee', desc: 'No upfront cost. Pure equity partnership model with revenue sharing.' },
-  { icon: '📦', title: 'Elite Supply Chain', desc: 'Direct access to Stella premier inventory — latest flagships on day 1.' },
-  { icon: '📊', title: '200% Growth YOY', desc: 'Fastest growing mobile retail brand in South India with proven metrics.' },
-  { icon: '🤝', title: 'Full Brand Support', desc: 'Training, marketing, store design, operations — all backed by Stella central.' },
-  { icon: '💳', title: '0% UPI Processing', desc: 'Our proprietary payment gateway means zero transaction fees for partners.' },
-  { icon: '🔒', title: 'Exclusive Territory', desc: 'Protected geographic zones — no internal competition between partners.' },
+  { icon: '📱', title: 'Comprehensive Mobile Solutions', desc: 'Stella Hit Tech offers not only mobile sales but also top-tier after-sales services, ensuring a seamless experience.' },
+  { icon: '💻', title: 'Tech Expertise', desc: 'With a strong foundation in software development and customized applications, we understand diverse business needs.' },
+  { icon: '🚀', title: 'Innovation-Driven', desc: 'We stay ahead of industry trends, constantly evolving with the latest technologies like AI and cloud solutions.' },
+  { icon: '❤️', title: 'Customer-Centric Approach', desc: 'Customer satisfaction is at the heart of what we do. We provide personalized services to meet client needs.' },
+  { icon: '👥', title: 'Skilled Team', desc: 'Our passionate professionals bring expertise in both mobile technology and software development.' },
+  { icon: '📈', title: 'Affordable & Scalable', desc: 'We offer scalable solutions that are both cost-effective and tailored to your unique requirements.' },
 ];
 
 const aboutUsCards = [
@@ -420,8 +424,8 @@ export default function HomePage() {
   const visionTitleParts = visionTitle.split(' ');
 
   const franchiseStats = homepageConfig?.franchise?.stats || [
-    { label: 'Outlets', value: '50+' },
-    { label: 'Growth', value: '200%' },
+    { label: 'Own Outlets', value: '5' },
+    { label: 'Franchise Outlets', value: '3' },
   ];
 
   const modalFranchiseStats = homepageConfig?.franchise?.stats || [
@@ -650,7 +654,7 @@ export default function HomePage() {
               </KineticTitle>
               <p className="text-gray-400 text-sm font-light leading-relaxed max-w-xl">
                 {homepageConfig?.franchise?.description ||
-                  "Become a part of India's elite mobile retail chain. Leverage our brand authority, supply chain excellence, and zero franchise fee model."}
+                  "Stella Hi Tech Private Limited combines local market experience with a structured franchise system to deliver consistent success. With successful outlets already operating, we provide complete business support including branding, supply chain, technical guidance, and marketing assistance."}
               </p>
 
               <div className="flex gap-12 pt-2 border-b border-white/[0.05] pb-6">
@@ -664,8 +668,8 @@ export default function HomePage() {
 
               <div className="flex flex-wrap gap-4 pt-2">
                 <a
-                  href="/stella_franchise_brochure.pdf"
-                  download="Stella_Franchise_Brochure.pdf"
+                  href="/Business_Brochure.pdf"
+                  download="Business_Brochure.pdf"
                   className="stella-button bg-stella-red text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-red-700 flex items-center gap-2 shadow-xl shadow-stella-red/20 w-fit"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -723,7 +727,7 @@ export default function HomePage() {
                 </h3>
                 <p className="text-gray-400 text-base md:text-lg font-light leading-relaxed max-w-4xl">
                   {homepageConfig?.franchise?.description ||
-                    "Become a part of India's elite mobile retail chain. Leverage our brand authority, supply chain excellence, and zero franchise fee model."}
+                    "Stella Hi Tech Private Limited combines local market experience with a structured franchise system to deliver consistent success. With successful outlets already operating, we provide complete business support including branding, supply chain, technical guidance, and marketing assistance."}
                 </p>
               </div>
 
@@ -755,8 +759,8 @@ export default function HomePage() {
               {/* Footer Actions */}
               <div className="flex flex-col sm:flex-row gap-4 pt-6">
                 <a
-                  href="/stella_franchise_brochure.pdf"
-                  download="Stella_Franchise_Brochure.pdf"
+                  href="/Business_Brochure.pdf"
+                  download="Business_Brochure.pdf"
                   className="stella-button bg-stella-red text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-700 flex items-center justify-center gap-3 shadow-2xl shadow-stella-red/25"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -799,10 +803,19 @@ export default function HomePage() {
 
             <div className="space-y-6 text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-xl">
               <p>
-                Founded in the heart of Chennai, Stella Mobiles began with a simple belief: that premium technology should be accompanied by a premium experience. We don't just sell phones; we curate the finest mobile technology for those who demand the best in performance, aesthetics, and service.
+                Stella Hi Tech Private Limited, an emerging SAP solutions firm, was established on January 26, 2025, in the heart of the Pearl City, Tuticorin, by its visionary founder, Mr. Maheshkumar V.
               </p>
               <p>
-                Our luxury retail lounges, fee-free transaction processing, direct-to-partner franchise logistics, and elite hardware curation serve as the pillars of the Stella brand.
+                The journey began in 2007 when Mr. Maheshkumar V started as a dedicated home appliance agency, creating the brand “STELLA” (Stella Home Appliances) in his hometown, Kulathur, Tuticorin.
+              </p>
+              <p>
+                Subsequently, Stella Mobiles opened its doors at Hongkong Plaza, Tuticorin, providing reliable and customer-satisfying mobile services. In 2015, it evolved into a full-fledged Mobile Sales Showroom. Today, Stella Mobiles stands as a leading multi-brand retail chain, offering a wide range of mobile phones, accessories, smart gadgets, tablets, laptops, and TVs.
+              </p>
+              <p>
+                With consistent growth and transformation, the brand expanded across Tuticorin town, establishing branches in multiple locations. Building on this strong foundation, we united as a team to launch our technology solutions firm, Stella Hi Tech Private Limited, in Polepettai, Tuticorin.
+              </p>
+              <p>
+                Stella Hi Tech Private Limited takes pride in its deep understanding of customer needs. Its greatest strength lies in its well-trained, customer-friendly team and an unwavering passion for delivering exceptional service.
               </p>
             </div>
 
@@ -836,48 +849,75 @@ export default function HomePage() {
       </section>
 
       {/* Branches Section */}
-      <section id="branches" className="max-w-7xl mx-auto px-6 py-8 w-full">
-        <Reveal3D variant="flip" stagger={100} className="grid grid-cols-1 md:grid-cols-2 gap-16 items-end mb-12">
-          <div data-reveal-child>
-            <KineticTitle className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white">
-              Our{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/30">Branches</span>
-            </KineticTitle>
-          </div>
-          <div data-reveal-child className="space-y-4">
-            <p className="text-gray-400 text-sm font-light leading-relaxed">
-              Stella operates across Chennai&apos;s most vibrant districts. Each hub is designed to deliver a premium, hands-on experience — from device selection to instant setup and after-sales support.
-            </p>
-            <div className="flex gap-10">
-              {hubs.slice(0, 3).map((hub) => (
-                <div key={`br-stat-${hub.name}`}>
-                  <p className="text-xl font-black text-white">{hub.tag.split(' ')[0]}</p>
-                  <p className="text-[9px] text-gray-600 font-black uppercase tracking-widest mt-0.5">{hub.name}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Reveal3D>
+      <section id="branches" className="max-w-7xl mx-auto px-6 py-24 w-full">
+         <Reveal3D variant="up">
+           <div className="text-center mb-16">
+              <KineticTitle className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white mb-4">
+                Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-stella-gold to-yellow-300">Network</span>
+              </KineticTitle>
+              <p className="text-gray-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+                Stella operates across multiple vibrant districts. Each hub is designed to deliver a premium, hands-on experience — from device selection to instant setup and after-sales support.
+              </p>
+           </div>
+         </Reveal3D>
 
-        <Reveal3D variant="zoom" delay={80}>
-        <div
-          ref={scrollContainerRef}
-          onMouseEnter={() => {
-            isHoveredRef.current = true;
-          }}
-          onMouseLeave={() => {
-            isHoveredRef.current = false;
-          }}
-          className="flex overflow-x-auto gap-4 pb-4 pt-1 scrollbar-none -mx-6 px-6 md:mx-0 md:px-0"
-        >
-          {hubs.map((hub, hidx) => (
-            <HubCard key={`br-${hidx}`} hub={hub} />
-          ))}
-          {hubs.map((hub, hidx) => (
-            <HubCard key={`br-dup-${hidx}`} hub={hub} />
-          ))}
-        </div>
-        </Reveal3D>
+         {/* Head Office */}
+         <Reveal3D variant="zoom" delay={100}>
+           <div className="mb-12 glass p-8 md:p-12 rounded-[2.5rem] border border-stella-gold/30 bg-gradient-to-br from-stella-gold/5 to-transparent relative overflow-hidden group shadow-2xl shadow-stella-gold/5">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-stella-gold/10 rounded-full blur-[80px] pointer-events-none transition-all duration-700 group-hover:bg-stella-gold/20" />
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center relative z-10 gap-8">
+                  <div>
+                     <span className="inline-block bg-stella-gold/20 text-stella-gold text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 rounded-lg mb-4">Head Office</span>
+                     <h3 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">Stella Hi Tech Pvt Ltd</h3>
+                     <p className="text-gray-300 max-w-lg leading-relaxed text-sm">102/5a/1a, Polepettai, Melur, Thoothukudi, Tamil Nadu - 628 002</p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                     <a href="tel:+919095510510" className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-6 py-4 rounded-xl transition-all group-hover:border-white/20">
+                        <span className="text-xl">📞</span>
+                        <span className="text-white font-bold tracking-wider text-sm">+91 9095510510</span>
+                     </a>
+                     <a href="https://maps.app.goo.gl/kJK1iod8Bk9sn5K46" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-3 bg-stella-gold text-black hover:bg-yellow-500 border border-stella-gold px-6 py-4 rounded-xl transition-all shadow-lg shadow-stella-gold/20">
+                        <span className="text-xl">📍</span>
+                        <span className="tracking-wider uppercase text-xs font-black">Get Directions</span>
+                     </a>
+                  </div>
+              </div>
+           </div>
+         </Reveal3D>
+
+         {/* Bento Grid for Branches */}
+         <Reveal3D variant="up" delay={200}>
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+               {hubs.map((hub, idx) => {
+                   const isFranchise = hub.tag.includes('Franchise');
+                   return (
+                       <div key={idx} className={`glass p-6 md:p-8 rounded-[2rem] border ${isFranchise ? 'border-stella-red/20 hover:border-stella-red/50 bg-gradient-to-br from-stella-red/5 to-transparent' : 'border-white/10 hover:border-white/30 bg-white/[0.02]'} transition-all duration-500 hover:-translate-y-1 group flex flex-col justify-between min-h-[220px]`}>
+                           <div>
+                              <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md mb-5 inline-block ${isFranchise ? 'bg-stella-red/20 text-stella-red' : 'bg-white/10 text-gray-300'}`}>{hub.tag}</span>
+                              <h4 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight mb-3 leading-tight group-hover:text-stella-gold transition-colors">{hub.name}</h4>
+                              <p className="text-gray-400 text-xs leading-relaxed line-clamp-3 pr-4">{hub.address}</p>
+                           </div>
+                           <div className="mt-8 flex items-end justify-between border-t border-white/5 pt-5">
+                              <div>
+                                 <p className="text-white/40 text-[9px] uppercase tracking-[0.2em] font-black mb-1.5">Managed By</p>
+                                 <p className="text-gray-200 text-sm font-bold tracking-wide">{hub.manager || 'N/A'}</p>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                 {hub.link && (
+                                   <a href={hub.link} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors" title="Get Directions">
+                                      📍
+                                   </a>
+                                 )}
+                                 <a href={`tel:${hub.phone.replace(/\\s+/g,'')}`} className="text-stella-gold hover:text-white font-black text-xs tracking-wider transition-colors">
+                                    {hub.phone}
+                                 </a>
+                              </div>
+                           </div>
+                       </div>
+                   )
+               })}
+           </div>
+         </Reveal3D>
       </section>
 
       {/* Customer Trust Section */}
