@@ -1,12 +1,14 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import DealsCountdown from '@/components/DealsCountdown';
 import DealsHoverExpand from '@/components/DealsHoverExpand';
 import KineticTitle from '@/components/KineticTitle';
 import Reveal3D from '@/components/Reveal3D';
 import TiltCard from '@/components/TiltCard';
 import FranchiseHubsGallery from '@/components/FranchiseHubsGallery';
+import StoreLocatorModal from '@/components/StoreLocatorModal';
 import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
 import { useWishlistStore } from '@/stores/wishlistStore';
@@ -17,11 +19,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Autoplay, Pagination, Navigation } from 'swiper/modules';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { EffectCoverflow, EffectCards, Autoplay, Pagination, Navigation } from 'swiper/modules';
+import { ChevronLeftIcon, ChevronRightIcon, MapPinIcon } from 'lucide-react';
 
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
+import 'swiper/css/effect-cards';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
@@ -97,45 +100,6 @@ const defaultCol3Reviews = [
   { id: 9, name: 'Arun K.', text: 'Stella franchise protocol is highly systematic. Excited to grow our partnership.', stars: 5 },
 ];
 
-const dummyDeals = [
-  {
-    id: 'dummy-1',
-    name: 'Stella Neo 15 Pro',
-    price: '129900',
-    oldPrice: 149900,
-    tag: 'Save 15%',
-    subtitle: 'Exclusive Stella Engineering Protocol',
-    img: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 'dummy-2',
-    name: 'Stella Pad Horizon',
-    price: '79900',
-    oldPrice: 94900,
-    tag: 'Trending',
-    subtitle: 'Premium Aluminum/Titanium Craftsmanship',
-    img: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 'dummy-3',
-    name: 'Stella Pods ANC',
-    price: '12900',
-    oldPrice: 17900,
-    tag: 'Hot Deal',
-    subtitle: '1-Year Stella Luxury Care Warranty',
-    img: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 'dummy-4',
-    name: 'Stella Watch Elite',
-    price: '34900',
-    oldPrice: 42900,
-    tag: 'Limited Edition',
-    subtitle: 'Experience next-generation performance',
-    img: 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=600&q=80',
-  },
-];
-
 const franchiseBentoItems = [
   { icon: '🏪', title: 'Zero Franchise Fee', desc: 'No upfront cost. Pure equity partnership.' },
   { icon: '📦', title: 'Elite Supply Chain', desc: "Direct access to Stella's premium inventory." },
@@ -156,7 +120,6 @@ const aboutUsCards = [
   { id: 1, image: 'https://images.unsplash.com/photo-1616348436168-de43ad0db179?auto=format&fit=crop&w=800&q=80', alt: 'Premium Curation' },
   { id: 2, image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80', alt: 'Elite Customer Care' },
   { id: 3, image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80', alt: 'Flagship Store' },
-  { id: 4, image: 'https://images.unsplash.com/photo-1592899677974-c12d0d014bc0?auto=format&fit=crop&w=800&q=80', alt: 'Transparent Value' },
 ];
 
 function ReviewCard({ review, keyPrefix = '' }) {
@@ -186,8 +149,10 @@ function HubCard({ hub, className = '' }) {
     >
       <div className="absolute top-0 right-0 w-16 h-16 bg-stella-red/5 rounded-full blur-xl group-hover:bg-stella-red/10 transition-all duration-500" />
       <span className="bg-stella-red text-white text-[7px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md">{hub.tag}</span>
-      <h3 className="text-base font-black uppercase tracking-wide text-white mt-2 mb-2 leading-tight">{hub.name}</h3>
-      <p className="text-gray-400 text-[11px] font-medium leading-relaxed mb-3">{hub.address}</p>
+      <h3 className="text-base font-black uppercase tracking-wide text-white mt-2 mb-2 leading-tight">{hub.tag?.includes('Own') ? 'Stella Mobiles Sales and Services - ' + hub.name : hub.name}</h3>
+      <p className="text-gray-400 text-[11px] font-medium leading-relaxed mb-3">
+        <strong className="text-gray-200">{hub.tag?.includes('Own') ? 'Stella Mobiles Sales and Services - ' + hub.name : hub.name}</strong>, {hub.address}
+      </p>
       <div className="flex items-center justify-between pt-3 border-t border-white/5">
         <a href={`tel:${hub.phone}`} className="text-stella-gold font-black uppercase tracking-[0.2em] text-[8px] hover:text-white transition-colors">
           {hub.phone}
@@ -214,6 +179,8 @@ export default function HomePage() {
   const [homepageConfig, setHomepageConfig] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showFranchiseModal, setShowFranchiseModal] = useState(false);
+  const [isStoreLocatorOpen, setIsStoreLocatorOpen] = useState(false);
+  const [activeBranchIdx, setActiveBranchIdx] = useState(0);
 
   const homepageConfigRef = useRef(null);
   const scrollContainerRef = useRef(null);
@@ -319,10 +286,10 @@ export default function HomePage() {
         }
       }
 
-      setDeals(dummyDeals);
+      setDeals([]);
     } catch (err) {
-      console.error('Error fetching deals, falling back to premium dummy data:', err);
-      setDeals(dummyDeals);
+      console.error('Error fetching deals, returning empty:', err);
+      setDeals([]);
     }
   }, []);
 
@@ -493,105 +460,71 @@ export default function HomePage() {
   const titleWords = (currentSlideData?.title || 'Stella Future').split(' ');
 
   return (
-    <div className="space-y-16 md:space-y-24 pb-32">
-      {/* ── Hybrid Bento Hero ── */}
+    <div className="space-y-8 md:space-y-12 pb-16">
+      {/* ── Polished Bento Grid Hero ── */}
       <section
         ref={heroRef}
-        className="relative w-full min-h-screen pt-24 pb-12 px-6 flex items-center justify-center bg-[#050508]"
+        className="relative w-full h-[calc(100svh-4rem)] md:h-[100svh] pt-12 md:pt-16 pb-8 md:pb-16 px-4 md:px-8 flex items-center justify-center bg-[#050508] overflow-hidden"
       >
-        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 md:grid-rows-[2fr_1fr] gap-4 md:gap-6 h-auto md:h-[80vh]">
+        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-10 md:grid-rows-1 gap-4 md:gap-6 h-[70vh] min-h-[500px]">
           
-          {/* Main Anchor: Video Mask Tile */}
+          {/* Main Anchor: Image Mask Tile (Center, 80%) */}
           <TiltCard
-            maxTilt={3}
+            maxTilt={2}
             scale={1.01}
-            className="md:col-span-8 md:row-span-2 relative rounded-[2.5rem] overflow-hidden bg-[#050508] border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.8)] group flex flex-col min-h-[50vh] md:min-h-0"
+            className="animate-float-up-card md:col-span-8 relative rounded-[2.5rem] overflow-hidden bg-[#0a0a0c] border border-white/[0.08] shadow-[0_30px_80px_rgba(0,0,0,0.5)] group flex flex-col h-full"
           >
+            <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#0d0d12] to-[#050508]" />
             <div className="absolute inset-0 z-0">
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[3000ms] ease-out"
-                src="https://cdn.pixabay.com/video/2020/05/24/40061-424750131_tiny.mp4"
+              <div 
+                className="w-full h-full bg-cover bg-center opacity-60 mix-blend-screen group-hover:opacity-80 group-hover:scale-105 transition-all duration-[2000ms] ease-out animate-hero-pan"
+                style={{ backgroundImage: `url('${currentSlideData?.image || 'https://images.unsplash.com/photo-1592899677974-c12d0d014bc0?auto=format&fit=crop&w=800&q=80'}')` }}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-[#050508]/40 to-transparent opacity-90" />
             </div>
-            {/* The Mask */}
-            <div className="absolute inset-0 z-10 bg-black flex flex-col items-center justify-center mix-blend-multiply pointer-events-none p-4">
-              <h1 className="text-[18vw] md:text-[10vw] font-black uppercase tracking-tighter text-white leading-[0.8] text-center">
+            {/* The Text Layer */}
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 md:p-12 pointer-events-none bg-black/10 backdrop-blur-[2px]">
+              <h1 className="text-[12vw] md:text-[6vw] font-black uppercase tracking-tighter text-white leading-[0.8] text-center drop-shadow-2xl">
                 {titleWords.slice(0, -1).join(' ')}<br/>
-                {titleWords[titleWords.length - 1]}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-stella-gold to-yellow-200">
+                  {titleWords[titleWords.length - 1]}
+                </span>
               </h1>
             </div>
-            {/* Overlay Elements (Must not be multiplied) */}
-            <div className="absolute bottom-8 left-8 z-20">
-              <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl px-4 py-2 rounded-full border border-white/20 shadow-lg">
-                <span className="w-2 h-2 rounded-full animate-pulse bg-stella-red" />
-                <span className="text-white font-black text-[9px] md:text-[11px] uppercase tracking-[0.2em]">
+            {/* Floating Glass Subtitle */}
+            <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 z-20">
+              <span className="inline-flex items-center gap-3 bg-white/[0.05] backdrop-blur-xl px-5 py-2.5 rounded-full border border-white/10 shadow-2xl">
+                <span className="w-2.5 h-2.5 rounded-full animate-pulse bg-stella-red shadow-[0_0_10px_rgba(255,0,0,0.8)]" />
+                <span className="text-white font-black text-[10px] md:text-xs uppercase tracking-[0.25em]">
                   {currentSlideData?.subtitle || 'Stella Exclusives'}
                 </span>
               </span>
             </div>
           </TiltCard>
 
-          {/* Product Showcase Tile */}
+          {/* Action Tile (Right Column, 20%) */}
           <TiltCard
-            maxTilt={5}
-            scale={1.02}
-            className="md:col-span-4 md:row-span-1 relative rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-[#1a1a1f] to-[#0a0a0c] border border-white/10 shadow-xl group min-h-[40vh] md:min-h-0 flex items-center justify-center"
+            maxTilt={6}
+            className="animate-float-down-card md:col-span-2 relative rounded-[2.5rem] overflow-hidden bg-[#0d0d12] border border-stella-red/50 shadow-[0_0_40px_rgba(230,57,70,0.2)] group flex flex-col items-center justify-center p-6 cursor-pointer hover:scale-105 transition-all h-full"
+            onClick={() => setIsStoreLocatorOpen(true)}
           >
-            <div className="absolute inset-0 bg-stella-red/5 group-hover:bg-stella-red/20 transition-colors duration-500 z-0" />
-            <div 
-              className="absolute inset-0 bg-cover bg-center opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[2000ms] ease-out z-0 mix-blend-luminosity group-hover:mix-blend-normal"
-              style={{ backgroundImage: `url('${currentSlideData?.image || 'https://images.unsplash.com/photo-1592899677974-c12d0d014bc0?auto=format&fit=crop&w=800&q=80'}')` }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-0 pointer-events-none" />
-            <div className="absolute bottom-8 left-8 right-8 z-10">
-              <h3 className="text-white font-black uppercase tracking-widest text-xl mb-2 drop-shadow-md">Flagship Vision</h3>
-              <p className="text-gray-300 text-xs font-medium leading-relaxed drop-shadow-md">Engineered for absolute perfection.</p>
+            <div className="absolute inset-0 bg-gradient-to-b from-stella-red/5 to-transparent opacity-100 transition-opacity duration-500" />
+            <div className="relative z-10 flex flex-col items-center gap-6 w-full">
+              <div className="relative">
+                <div className="absolute inset-0 bg-stella-red rounded-full animate-ping opacity-30 transition-opacity" />
+                <div className="bg-stella-red/20 p-5 rounded-full backdrop-blur-md border border-stella-red/40 transition-colors">
+                  <MapPinIcon size={32} className="text-stella-red drop-shadow-lg relative z-10 transition-colors" />
+                </div>
+              </div>
+              <span className="text-stella-red font-black uppercase tracking-[0.15em] text-sm md:text-lg text-center drop-shadow-sm leading-tight mt-2 transition-colors">
+                Store <br/> Locator
+              </span>
+              
+              <div className="mt-4 px-4 py-2 rounded-full bg-stella-red text-white text-[10px] font-bold uppercase tracking-widest border border-stella-red flex items-center gap-1 shadow-[0_0_15px_rgba(230,57,70,0.5)] transition-colors">
+                Find Us <ChevronRightIcon size={12} />
+              </div>
             </div>
           </TiltCard>
-
-          {/* Action Tile */}
-          <div className="md:col-span-2 md:row-span-1 flex flex-col gap-4 md:gap-6">
-            <TiltCard
-              maxTilt={8}
-              className="flex-1 relative rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-stella-red to-red-900 border border-red-500/50 shadow-lg shadow-stella-red/20 group flex flex-col items-center justify-center p-6 cursor-pointer hover:shadow-stella-red/40 transition-all"
-              onClick={() => navigate('/products')}
-            >
-              <span className="text-white font-black uppercase tracking-[0.25em] text-[11px] md:text-xs text-center drop-shadow-sm group-hover:scale-105 transition-transform">
-                Discover Elite
-              </span>
-            </TiltCard>
-            
-            <TiltCard
-              maxTilt={8}
-              className="flex-1 relative rounded-[2.5rem] overflow-hidden bg-[#0a0a0c] border border-white/10 shadow-lg group flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-white/5 transition-colors"
-              onClick={() => navigate('/products')}
-            >
-              <span className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px] text-center group-hover:text-white transition-colors">
-                View Catalog
-              </span>
-            </TiltCard>
-          </div>
-
-          {/* Stats / Info Tile */}
-          <TiltCard
-            maxTilt={5}
-            className="md:col-span-2 md:row-span-1 relative rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-[#1a1a1f] to-[#0a0a0c] border border-white/10 shadow-xl p-8 flex flex-col justify-center"
-          >
-            <div className="w-12 h-12 rounded-full bg-stella-gold/10 border border-stella-gold/20 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-stella-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <div>
-              <h4 className="text-white font-black text-4xl leading-none mb-2">2.4x</h4>
-              <p className="text-gray-500 text-[10px] uppercase tracking-widest font-bold">Processing Power</p>
-            </div>
-          </TiltCard>
-
         </div>
       </section>
 
@@ -631,81 +564,57 @@ export default function HomePage() {
                 onToggleWishlist={toggleWishlist}
                 onViewProduct={viewProduct}
               />
-            ) : null}
+            ) : (
+              <div className="h-[28rem] md:h-[26rem] rounded-[2rem] border border-dashed border-white/10 flex items-center justify-center">
+                <p className="text-white/40 uppercase tracking-widest text-[10px] font-black">No Active Deals</p>
+              </div>
+            )}
           </Reveal3D>
         </section>
       )}
 
-      {/* Franchise Section */}
-      <section className="relative py-24 flex flex-col justify-center overflow-hidden w-full border-t border-white/5 bg-gradient-to-b from-stella-black to-[#0a0a0c]">
-        {/* Background elements */}
-        <div className="absolute top-1/4 right-0 w-[450px] h-[450px] bg-stella-red/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-1/4 left-0 w-[450px] h-[450px] bg-stella-gold/3 rounded-full blur-[120px] pointer-events-none" />
+      {/* Franchise Section (CTA Only) */}
+      <section className="relative py-16 flex flex-col items-center justify-center overflow-hidden w-full border-t border-white/5 bg-gradient-to-b from-stella-black to-[#0a0a0c]">
+         <div className="absolute top-1/4 right-0 w-[450px] h-[450px] bg-stella-red/5 rounded-full blur-[120px] pointer-events-none" />
+         <div className="absolute bottom-1/4 left-0 w-[450px] h-[450px] bg-stella-gold/3 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 relative z-20 w-full">
-          <Reveal3D variant="up" stagger={120} className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            {/* Left side: intro */}
-            <div data-reveal-child className="lg:col-span-5 space-y-6">
-              <KineticTitle className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white leading-tight">
-                {franchiseTitleParts.slice(0, 2).join(' ')}{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-stella-gold to-white">
-                  {franchiseTitleParts.slice(2).join(' ')}
-                </span>
-              </KineticTitle>
-              <p className="text-gray-400 text-sm font-light leading-relaxed max-w-xl">
-                {homepageConfig?.franchise?.description ||
-                  "Stella Hi Tech Private Limited combines local market experience with a structured franchise system to deliver consistent success. With successful outlets already operating, we provide complete business support including branding, supply chain, technical guidance, and marketing assistance."}
-              </p>
-
-              <div className="flex gap-12 pt-2 border-b border-white/[0.05] pb-6">
-                {franchiseStats.map((stat) => (
-                  <div key={stat.label}>
-                    <p className="text-4xl font-black text-white">{stat.value}</p>
-                    <p className="text-[9px] text-gray-500 font-black uppercase tracking-[0.3em] mt-1">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-wrap gap-4 pt-2">
-                <a
-                  href="/Business_Brochure.pdf"
-                  download="Business_Brochure.pdf"
-                  className="stella-button bg-stella-red text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-red-700 flex items-center gap-2 shadow-xl shadow-stella-red/20 w-fit"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                  Download Brochure
-                </a>
-                <button
+         <Reveal3D variant="zoom">
+            <div className="text-center space-y-6 relative z-20 px-6">
+               <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white">
+                  {franchiseTitleParts.slice(0, 2).join(' ')}{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-stella-gold to-white">
+                    {franchiseTitleParts.slice(2).join(' ')}
+                  </span>
+               </h2>
+               <p className="text-gray-400 max-w-lg mx-auto text-sm">Join our growing network of successful franchise partners with pure equity.</p>
+               <button
                   type="button"
                   onClick={() => setShowFranchiseModal(true)}
-                  className="stella-button bg-white/5 border border-white/10 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-white/10 flex items-center gap-2"
-                >
-                  View All Details
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </button>
-              </div>
+                  className="stella-button bg-stella-gold text-black px-8 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-yellow-500 shadow-xl shadow-stella-gold/20 inline-block transition-all hover:scale-105"
+               >
+                  View Franchise Details
+               </button>
             </div>
-
-            {/* Right side: Franchise hub cards gallery instead of bento benefits grid */}
-            <div data-reveal-child className="lg:col-span-7 w-full">
-              {hubs.length > 0 && (
-                <FranchiseHubsGallery hubs={hubs} />
-              )}
-            </div>
-          </Reveal3D>
-        </div>
+         </Reveal3D>
       </section>
 
       {/* Franchise Details Modal */}
-      {showFranchiseModal &&
-        createPortal(
-          <div className="fixed inset-0 z-[200] w-full h-screen overflow-y-auto bg-stella-black/98 backdrop-blur-3xl flex flex-col custom-scrollbar">
+      {createPortal(
+        <AnimatePresence>
+          {showFranchiseModal && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-0 z-[200] w-full h-screen overflow-hidden bg-gradient-to-b from-stella-black/95 to-[#0a0a0c]/95 backdrop-blur-3xl flex flex-col"
+            >
+            {/* Background elements (Absolute to non-scrolling parent) */}
+            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-stella-gold/10 rounded-full blur-[150px] pointer-events-none" />
+            <div className="absolute bottom-[20%] left-[-10%] w-[600px] h-[600px] bg-stella-red/10 rounded-full blur-[150px] pointer-events-none" />
+            
             {/* Sticky Header */}
-            <div className="sticky top-0 bg-stella-black/90 backdrop-blur-md border-b border-white/[0.05] px-6 md:px-16 py-6 md:py-8 flex items-center justify-between z-10 w-full">
+            <div className="shrink-0 bg-stella-black/90 backdrop-blur-md border-b border-white/[0.05] px-6 md:px-16 py-6 md:py-8 flex items-center justify-between z-20 w-full">
               <div>
                 <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white">Franchise Program</h2>
                 <p className="text-[8px] md:text-[9px] text-gray-500 font-black uppercase tracking-[0.4em] mt-1">Stella Partnership Programme</p>
@@ -719,137 +628,163 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* Content Container */}
-            <div className="max-w-7xl mx-auto w-full px-6 md:px-16 py-12 md:py-20 flex-1 space-y-12 md:space-y-16">
-              <div className="space-y-6">
-                <h3 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white leading-tight">
+            {/* Scrolling Content Container */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar relative z-10 w-full">
+              <div className="max-w-7xl mx-auto w-full px-6 md:px-16 py-12 md:py-20 space-y-12 md:space-y-16">
+                <div className="space-y-4">
+                <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white leading-tight">
                   {homepageConfig?.franchise?.title || 'Partner with Stella'}
                 </h3>
-                <p className="text-gray-400 text-base md:text-lg font-light leading-relaxed max-w-4xl">
+                <p className="text-gray-400 text-base md:text-lg font-medium leading-relaxed max-w-4xl">
                   {homepageConfig?.franchise?.description ||
                     "Stella Hi Tech Private Limited combines local market experience with a structured franchise system to deliver consistent success. With successful outlets already operating, we provide complete business support including branding, supply chain, technical guidance, and marketing assistance."}
                 </p>
               </div>
 
               {/* Stats Grid */}
-              <div className="flex gap-16 pb-12 border-b border-white/[0.05]">
+              <div className="flex gap-12 pb-10 border-b border-white/[0.05]">
                 {franchiseStats.map((stat) => (
                   <div key={stat.label}>
-                    <p className="text-5xl md:text-6xl font-black text-white">{stat.value}</p>
-                    <p className="text-[10px] md:text-xs text-gray-500 font-black uppercase tracking-[0.3em] mt-2">{stat.label}</p>
+                    <p className="text-3xl md:text-4xl font-black text-white">{stat.value}</p>
+                    <p className="text-sm text-gray-400 font-black uppercase tracking-widest mt-1">{stat.label}</p>
                   </div>
                 ))}
               </div>
 
-              {/* Benefits Grid */}
+              {/* Benefits Grid (Normalized Text) */}
               <div className="space-y-6">
-                <h4 className="text-xs font-black uppercase tracking-[0.4em] text-gray-500">Why Partner With Us</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <h4 className="text-base md:text-lg font-black uppercase tracking-[0.2em] text-gray-300">Why Partner With Us</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {(homepageConfig?.franchise?.benefits || franchiseModalBenefits).map((item, i) => (
-                    <div key={i} className="glass p-8 rounded-3xl border border-white/5 hover:border-white/10 hover:-translate-y-1 transition-all duration-300 space-y-4 relative group overflow-hidden">
-                      <div className="absolute top-0 right-0 w-16 h-16 bg-white/[0.01] rounded-full blur-xl group-hover:bg-stella-red/5 transition-all duration-500" />
-                      <span className="text-3xl block">{item.icon}</span>
-                      <h5 className="text-white font-black text-sm uppercase tracking-wider">{item.title}</h5>
-                      <p className="text-gray-400 text-xs font-medium leading-relaxed">{item.desc}</p>
+                    <div key={i} className="glass p-5 rounded-2xl border border-white/5 hover:border-white/10 transition-all duration-300">
+                      <h5 className="text-white font-black text-base uppercase tracking-wider mb-2">{item.title}</h5>
+                      <p className="text-gray-400 text-sm font-medium leading-relaxed">{item.desc}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
+              {/* Franchise Hubs Gallery */}
+              <div className="space-y-6">
+                <h4 className="text-base md:text-lg font-black uppercase tracking-[0.2em] text-gray-300">Our Franchise Partners</h4>
+                <div className="w-full">
+                  <FranchiseHubsGallery hubs={hubs.filter(h => h.tag.includes('Franchise'))} />
+                </div>
+              </div>
+
               {/* Footer Actions */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                <a
-                  href="/Business_Brochure.pdf"
-                  download="Business_Brochure.pdf"
-                  className="stella-button bg-stella-red text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-700 flex items-center justify-center gap-3 shadow-2xl shadow-stella-red/25"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                  Download Full Brochure
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setShowFranchiseModal(false)}
-                  className="bg-white/5 border border-white/10 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 cursor-pointer"
-                >
-                  Close Franchise View
-                </button>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-6 pt-6 mt-8 border-t border-white/[0.05]">
+                
+                {/* Brochure Button Container */}
+                <div className="relative group">
+                  <a
+                    href="/Business_Brochure.pdf"
+                    download="Business_Brochure.pdf"
+                    className="stella-button bg-stella-red text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-700 flex items-center justify-center gap-3 shadow-2xl shadow-stella-red/25 transition-all w-full sm:w-auto"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Full Brochure
+                  </a>
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-64 p-4 bg-stella-black/95 backdrop-blur-xl border border-white/10 rounded-2xl opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50 shadow-2xl">
+                    <p className="text-[11px] text-gray-300 leading-relaxed text-center font-medium">Download our comprehensive franchise guide detailing the business model, investment, and complete benefits of partnering with Stella.</p>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-white/10" />
+                  </div>
+                </div>
+
+                {/* Software Button Container */}
+                <div className="relative group">
+                  <a
+                    href="/Stella_Billing_Software.exe"
+                    download="Stella_Billing_Software.exe"
+                    className="stella-button bg-stella-gold text-black px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-yellow-500 flex items-center justify-center gap-3 shadow-2xl shadow-stella-gold/25 transition-all w-full sm:w-auto"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Billing Software
+                  </a>
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-64 p-4 bg-stella-black/95 backdrop-blur-xl border border-white/10 rounded-2xl opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50 shadow-2xl">
+                    <p className="text-[11px] text-gray-300 leading-relaxed text-center font-medium">Get our proprietary Stella Point-of-Sale and Billing software, custom-built to streamline your store's inventory and daily operations.</p>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-white/10" />
+                  </div>
+                </div>
+
               </div>
             </div>
-          </div>,
-          document.body,
-        )}
+            </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
 
 
 
-      {/* About Us Section */}
-      <section id="about-us" className="border-t border-white/5 bg-[#08080a]">
-        <div className="max-w-7xl mx-auto px-6 py-24 md:py-32 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+      {/* Our Story Section */}
+      <section id="our-story" className="border-t border-white/5 bg-[#08080a]">
+        <div className="max-w-7xl mx-auto px-6 py-16 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           {/* Left Column: Text content */}
           <div className="lg:col-span-6 space-y-8 text-left">
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <span className="w-12 h-[1px] bg-stella-gold" />
-                <span className="text-stella-gold font-black text-[10px] uppercase tracking-[0.5em]">Our Story</span>
+                <span className="text-stella-gold font-black text-[10px] uppercase tracking-[0.5em]">The Journey</span>
               </div>
               <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white leading-[0.9]">
-                Redefining <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-stella-gold to-stella-gold">
-                  Mobile Excellence
-                </span>
+                Our Story
               </h2>
             </div>
 
             <div className="space-y-6 text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-xl">
               <p>
-                Stella Hi Tech Private Limited, an emerging SAP solutions firm, was established on January 26, 2025, in the heart of the Pearl City, Tuticorin, by its visionary founder, Mr. Maheshkumar V.
+                Founded in 2007 by visionary Mr. Maheshkumar V, our journey began as a dedicated home appliance agency in Kulathur, Tuticorin under the brand name "STELLA".
               </p>
               <p>
-                The journey began in 2007 when Mr. Maheshkumar V started as a dedicated home appliance agency, creating the brand “STELLA” (Stella Home Appliances) in his hometown, Kulathur, Tuticorin.
+                Driven by a commitment to reliability and customer satisfaction, Stella Mobiles opened its doors at Hongkong Plaza, later evolving into a full-fledged Mobile Sales Showroom in 2015. Today, we stand as a premier multi-brand retail chain offering an extensive range of the latest smartphones, smart gadgets, tablets, laptops, and TVs.
               </p>
               <p>
-                Subsequently, Stella Mobiles opened its doors at Hongkong Plaza, Tuticorin, providing reliable and customer-satisfying mobile services. In 2015, it evolved into a full-fledged Mobile Sales Showroom. Today, Stella Mobiles stands as a leading multi-brand retail chain, offering a wide range of mobile phones, accessories, smart gadgets, tablets, laptops, and TVs.
+                With consistent growth and transformation across multiple branches, we united as a team to launch our technology solutions firm, Stella Hi Tech Private Limited, right in the heart of the Pearl City. Our greatest strength continues to be our deeply rooted understanding of customer needs, our well-trained team, and an unwavering passion for delivering exceptional service.
               </p>
-              <p>
-                With consistent growth and transformation, the brand expanded across Tuticorin town, establishing branches in multiple locations. Building on this strong foundation, we united as a team to launch our technology solutions firm, Stella Hi Tech Private Limited, in Polepettai, Tuticorin.
-              </p>
-              <p>
-                Stella Hi Tech Private Limited takes pride in its deep understanding of customer needs. Its greatest strength lies in its well-trained, customer-friendly team and an unwavering passion for delivering exceptional service.
-              </p>
-            </div>
-
-            {/* Brand Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-6 border-t border-white/[0.05]">
-              {ourStoryStats.map((stat, idx) => (
-                <div key={idx}>
-                  <p className="text-3xl font-black text-white">{stat.value}</p>
-                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-[0.3em] mt-1">{stat.label}</p>
-                </div>
-              ))}
             </div>
           </div>
 
-          {/* Right Column: Premium Curated Image Grid */}
-          <div className="lg:col-span-6 w-full grid grid-cols-2 gap-4">
-            {aboutUsCards.map((card) => (
-              <div key={card.id} className="relative aspect-square overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] group shadow-2xl">
-                <img
-                  src={card.image}
-                  alt={card.alt || ""}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-                  <span className="text-white text-[10px] md:text-xs font-black uppercase tracking-wider">{card.alt}</span>
-                </div>
-              </div>
-            ))}
+          {/* Right Column: Premium Curated Image Carousel */}
+          <div className="lg:col-span-6 w-full flex items-center justify-center pt-10 lg:pt-0">
+            <Swiper
+              spaceBetween={40}
+              autoplay={{
+                delay: 2000,
+                disableOnInteraction: false,
+              }}
+              effect="cards"
+              grabCursor={true}
+              loop={true}
+              modules={[EffectCards, Autoplay]}
+              className="h-[380px] w-[260px] md:h-[450px] md:w-[320px]"
+            >
+              {[...aboutUsCards, ...aboutUsCards].map((card, idx) => (
+                <SwiperSlide key={`${card.id}-${idx}`} className="rounded-3xl border border-white/10 shadow-2xl overflow-hidden bg-stella-black">
+                  <img
+                    src={card.image}
+                    alt={card.alt || ""}
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex items-end p-6">
+                    <span className="text-white text-xs md:text-sm font-black uppercase tracking-widest">{card.alt}</span>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </div>
       </section>
 
       {/* Branches Section */}
-      <section id="branches" className="max-w-7xl mx-auto px-6 py-24 w-full">
+      <section id="branches" className="max-w-7xl mx-auto px-6 py-16 w-full">
          <Reveal3D variant="up">
            <div className="text-center mb-16">
               <KineticTitle className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white mb-4">
@@ -871,57 +806,74 @@ export default function HomePage() {
                      <h3 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">Stella Hi Tech Pvt Ltd</h3>
                      <p className="text-gray-300 max-w-lg leading-relaxed text-sm">102/5a/1a, Polepettai, Melur, Thoothukudi, Tamil Nadu - 628 002</p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                     <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                      <a href="tel:+919095510510" className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-6 py-4 rounded-xl transition-all group-hover:border-white/20">
                         <span className="text-xl">📞</span>
                         <span className="text-white font-bold tracking-wider text-sm">+91 9095510510</span>
-                     </a>
-                     <a href="https://maps.app.goo.gl/kJK1iod8Bk9sn5K46" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-3 bg-stella-gold text-black hover:bg-yellow-500 border border-stella-gold px-6 py-4 rounded-xl transition-all shadow-lg shadow-stella-gold/20">
-                        <span className="text-xl">📍</span>
-                        <span className="tracking-wider uppercase text-xs font-black">Get Directions</span>
                      </a>
                   </div>
               </div>
            </div>
          </Reveal3D>
 
-         {/* Bento Grid for Branches */}
+         {/* Interactive Branches UI */}
          <Reveal3D variant="up" delay={200}>
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-               {hubs.map((hub, idx) => {
-                   const isFranchise = hub.tag.includes('Franchise');
-                   return (
-                       <div key={idx} className={`glass p-6 md:p-8 rounded-[2rem] border ${isFranchise ? 'border-stella-red/20 hover:border-stella-red/50 bg-gradient-to-br from-stella-red/5 to-transparent' : 'border-white/10 hover:border-white/30 bg-white/[0.02]'} transition-all duration-500 hover:-translate-y-1 group flex flex-col justify-between min-h-[220px]`}>
-                           <div>
-                              <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md mb-5 inline-block ${isFranchise ? 'bg-stella-red/20 text-stella-red' : 'bg-white/10 text-gray-300'}`}>{hub.tag}</span>
-                              <h4 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight mb-3 leading-tight group-hover:text-stella-gold transition-colors">{hub.name}</h4>
-                              <p className="text-gray-400 text-xs leading-relaxed line-clamp-3 pr-4">{hub.address}</p>
-                           </div>
-                           <div className="mt-8 flex items-end justify-between border-t border-white/5 pt-5">
-                              <div>
-                                 <p className="text-white/40 text-[9px] uppercase tracking-[0.2em] font-black mb-1.5">Managed By</p>
-                                 <p className="text-gray-200 text-sm font-bold tracking-wide">{hub.manager || 'N/A'}</p>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                 {hub.link && (
-                                   <a href={hub.link} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors" title="Get Directions">
-                                      📍
-                                   </a>
-                                 )}
-                                 <a href={`tel:${hub.phone.replace(/\\s+/g,'')}`} className="text-stella-gold hover:text-white font-black text-xs tracking-wider transition-colors">
-                                    {hub.phone}
-                                 </a>
-                              </div>
-                           </div>
-                       </div>
-                   )
-               })}
+           <div className="flex flex-col lg:flex-row gap-8 min-h-[500px]">
+               {/* Left side: Interactive List */}
+               <div className="w-full lg:w-1/3 flex flex-col gap-3">
+                  {hubs.filter(hub => !hub.tag.includes('Franchise')).map((hub, idx) => {
+                     const isActive = activeBranchIdx === idx;
+                     return (
+                         <div 
+                           key={idx} 
+                           onClick={() => setActiveBranchIdx(idx)}
+                           className={`cursor-pointer group flex items-center justify-between p-5 rounded-2xl border transition-all duration-300 ${isActive ? 'bg-stella-gold/10 border-stella-gold shadow-[0_0_20px_rgba(255,215,0,0.15)] scale-[1.02]' : 'bg-white/[0.02] border-white/5 hover:border-white/20 hover:bg-white/[0.05]'}`}
+                         >
+                            <div>
+                               <h4 className={`text-lg font-black uppercase tracking-tight transition-colors duration-300 ${isActive ? 'text-stella-gold' : 'text-gray-300 group-hover:text-white'}`}>{hub.name}</h4>
+                               <p className="text-gray-500 text-xs mt-1 uppercase tracking-widest">{hub.address.split(',')[0]}</p>
+                            </div>
+                            <div className={`transition-transform duration-300 ${isActive ? 'translate-x-1 opacity-100' : 'opacity-0 -translate-x-2 group-hover:opacity-50'}`}>
+                               <ChevronRightIcon className="w-5 h-5 text-stella-gold" />
+                            </div>
+                         </div>
+                     );
+                  })}
+               </div>
+
+               {/* Right side: Detailed Feature Card */}
+               <div className="w-full lg:w-2/3 relative h-full min-h-[400px]">
+                  {hubs.filter(hub => !hub.tag.includes('Franchise')).map((hub, idx) => {
+                     const isActive = activeBranchIdx === idx;
+                     if (!isActive) return null;
+                     
+                     return (
+                        <div key={`detail-${idx}`} className="absolute inset-0 glass p-8 md:p-12 rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent flex flex-col justify-between animate-in fade-in zoom-in duration-500">
+                            <div>
+                               <h3 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-6 leading-tight">{hub.name}</h3>
+                               <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-xl mb-8 font-medium">{hub.address}</p>
+                            </div>
+                            
+                            <div className="mt-8 pt-8 border-t border-white/10">
+                               <p className="text-white/40 text-[10px] uppercase tracking-[0.2em] font-black mb-2">Branch Manager</p>
+                               <p className="text-gray-200 text-lg font-bold tracking-wide">{hub.manager || 'N/A'}</p>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-4 mt-10">
+                               <a href={`tel:${hub.phone.replace(/\s+/g,'')}`} className="flex items-center gap-3 bg-white hover:bg-gray-200 text-black px-6 py-3.5 rounded-xl transition-all font-black uppercase tracking-wider text-sm shadow-xl shadow-white/10">
+                                  <span>📞</span> Call Now
+                               </a>
+                            </div>
+                        </div>
+                     )
+                  })}
+               </div>
            </div>
          </Reveal3D>
       </section>
 
       {/* Customer Trust Section */}
-      <section className="max-w-7xl mx-auto px-6 mt-32">
+      <section className="max-w-7xl mx-auto px-6 mt-16">
         <Reveal3D variant="flip">
         <div className="text-center mb-10">
           <KineticTitle className="text-4xl font-black uppercase tracking-tighter text-white mb-3">
@@ -991,7 +943,42 @@ export default function HomePage() {
         </Reveal3D>
       </section>
 
+      <StoreLocatorModal 
+        isOpen={isStoreLocatorOpen} 
+        onClose={() => setIsStoreLocatorOpen(false)} 
+        hubs={activeConfig?.franchise?.hubs || defaultHubs} 
+      />
+
       <style>{`
+        @keyframes hero-pan {
+          0% { transform: scale(1.05) translate(0, 0); }
+          50% { transform: scale(1.08) translate(-1%, 1%); }
+          100% { transform: scale(1.05) translate(0, 0); }
+        }
+        .animate-hero-pan {
+          animation: hero-pan 20s ease-in-out infinite;
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-6px); }
+        }
+        .animate-float {
+          animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float-up-card {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-12px); }
+        }
+        @keyframes float-down-card {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(12px); }
+        }
+        .animate-float-up-card {
+          animation: float-up-card 8s ease-in-out infinite;
+        }
+        .animate-float-down-card {
+          animation: float-down-card 8s ease-in-out infinite;
+        }
         @keyframes marquee-vertical-up {
           0% { transform: translateY(0); }
           100% { transform: translateY(-50%); }

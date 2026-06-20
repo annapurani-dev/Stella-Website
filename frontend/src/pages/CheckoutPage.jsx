@@ -255,7 +255,7 @@ export default function CheckoutPage() {
                             className={`px-6 py-4 cursor-pointer border-b border-white/5 transition-colors hover:bg-white/5 ${selectedBranchId === branch.id ? 'bg-stella-red/10 border-l-2 border-l-stella-red' : ''}`}
                           >
                             <div className="text-xs font-bold uppercase tracking-widest text-white mb-1">{branch.name}</div>
-                            <div className="text-[10px] text-gray-500 tracking-wider">{branch.address}</div>
+                            <div className="text-[10px] text-gray-500 tracking-wider"><strong className="text-gray-300">{branch.name}</strong>, {branch.address}</div>
                           </div>
                         ))}
                       </div>

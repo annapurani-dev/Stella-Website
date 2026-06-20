@@ -9,15 +9,6 @@ import TiltCard from '@/components/TiltCard';
 
 const API = import.meta.env.VITE_API_BASE_URL;
 
-const categoryBgImages = {
-  smartphones: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1920&q=80',
-  tablets: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=1920&q=80',
-  wearables: 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=1920&q=80',
-  audio: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=1920&q=80',
-  accessories: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=1920&q=80',
-  gadgets: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1920&q=80',
-};
-
 const matchProductOption = (product, groupKey, option) => {
   const normOption = option.toLowerCase().replace(/\s+/g, '');
 
@@ -76,8 +67,7 @@ export default function ProductListPage() {
     if (allFiltersConfig?._category_images?.[cat]) {
       return allFiltersConfig._category_images[cat];
     }
-    const normCat = cat.toLowerCase();
-    return categoryBgImages[normCat] || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1920&q=80';
+    return 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1920&q=80';
   }, [allFiltersConfig, categoryName]);
 
   const fetchProducts = useCallback(async () => {

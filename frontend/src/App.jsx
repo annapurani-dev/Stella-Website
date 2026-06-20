@@ -23,7 +23,7 @@ const API = import.meta.env.VITE_API_BASE_URL;
 const defaultNavLinks = [
   { name: 'Smartphones', path: '/products?category=Smartphones' },
   { name: 'Accessories', path: '/products?category=Accessories' },
-  { name: 'About Us', path: '/#about-us' },
+  { name: 'Our Story', path: '/#our-story' },
 ];
 
 const footerSections = [
@@ -36,7 +36,7 @@ const footerSections = [
   },
   {
     title: 'Company',
-    links: [{ name: 'About Us', path: '/#about-us' }],
+    links: [{ name: 'Our Story', path: '/#our-story' }],
   },
 ];
 
@@ -59,7 +59,7 @@ function getNavLinkPath(name) {
   if (!name) return '/';
   const norm = name.trim().toLowerCase();
   if (norm === 'home') return '/';
-  if (norm === 'our story' || norm === 'about' || norm === 'about us') return '/#about-us';
+  if (norm === 'our story' || norm === 'about' || norm === 'about us') return '/#our-story';
   return `/products?category=${encodeURIComponent(name.trim())}`;
 }
 
@@ -86,7 +86,7 @@ export default function App() {
           data.forEach((cat) => {
             links.push({ name: cat.name, path: `/products?category=${encodeURIComponent(cat.name)}` });
           });
-          links.push({ name: 'About Us', path: '/#about-us' });
+          links.push({ name: 'Our Story', path: '/#our-story' });
           setNavLinks(links);
         }
       })

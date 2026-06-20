@@ -64,7 +64,7 @@ const DEFAULT_HOMEPAGE = {
   navLinks: [
     { name: 'Smartphones', path: '/products?category=Smartphones' },
     { name: 'Accessories', path: '/products?category=Accessories' },
-    { name: 'About Us', path: '/#about-us' },
+    { name: 'Our Story', path: '/#our-story' },
   ],
   our_story: {
     hero_title: 'Our Story',
@@ -1066,6 +1066,34 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
+            {/* Category Display Settings Panel */}
+            <div className="bg-[#0e0e11] rounded-[2rem] border border-white/[0.05] p-10 space-y-8">
+              <h3 className="text-sm font-black text-stella-gold uppercase tracking-[0.4em] border-b border-white/5 pb-4">Category Display Settings</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-[9px] font-black text-gray-500 uppercase tracking-widest">Select Category</label>
+                  <select
+                    value={selectedFilterCategory}
+                    onChange={(e) => setSelectedFilterCategory(e.target.value)}
+                    className="w-full bg-black border border-white/[0.05] rounded-xl px-5 py-3.5 text-white text-xs font-bold cursor-pointer outline-none"
+                  >
+                    {uniqueCategories.map(cat => cat !== 'All' && <option key={cat} value={cat}>{cat}</option>)}
+                  </select>
+                </div>
+                {selectedFilterCategory && (
+                  <div className="space-y-2">
+                    <label className="block text-[9px] font-black text-gray-500 uppercase tracking-widest">Header Image URL</label>
+                    <input
+                      value={categoryHeaderImage}
+                      onChange={(e) => setCategoryHeaderImage(e.target.value)}
+                      placeholder="https://..."
+                      className="w-full bg-black border border-white/[0.05] rounded-xl px-5 py-3.5 text-white text-xs font-mono outline-none"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Franchise Settings Panel */}
             <div className="bg-[#0e0e11] rounded-[2rem] border border-white/[0.05] p-10 space-y-8">
               <h3 className="text-sm font-black text-stella-gold uppercase tracking-[0.4em] border-b border-white/5 pb-4">Franchise Program Settings</h3>
@@ -1298,6 +1326,172 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Our Story Settings Panel */}
+            <div className="bg-[#0e0e11] rounded-[2rem] border border-white/[0.05] p-10 space-y-8">
+              <h3 className="text-sm font-black text-stella-gold uppercase tracking-[0.4em] border-b border-white/5 pb-4">Our Story Content</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-[9px] font-black text-gray-500 uppercase tracking-widest">Hero Title</label>
+                  <input
+                    value={homepage.our_story?.hero_title || ''}
+                    onChange={(e) => updateHomepage('our_story.hero_title', e.target.value)}
+                    className="w-full bg-black border border-white/[0.05] rounded-xl px-5 py-3.5 text-white text-xs font-bold"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-[9px] font-black text-gray-500 uppercase tracking-widest">Hero Subtitle</label>
+                  <input
+                    value={homepage.our_story?.hero_subtitle || ''}
+                    onChange={(e) => updateHomepage('our_story.hero_subtitle', e.target.value)}
+                    className="w-full bg-black border border-white/[0.05] rounded-xl px-5 py-3.5 text-white text-xs font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-[9px] font-black text-gray-500 uppercase tracking-widest">Hero Background Image</label>
+                <input
+                  value={homepage.our_story?.hero_image || ''}
+                  onChange={(e) => updateHomepage('our_story.hero_image', e.target.value)}
+                  className="w-full bg-black border border-white/[0.05] rounded-xl px-5 py-3.5 text-white text-xs font-mono"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 pt-4 border-t border-white/5">
+                <div className="space-y-2">
+                  <label className="block text-[9px] font-black text-gray-500 uppercase tracking-widest">Vision Title</label>
+                  <input
+                    value={homepage.our_story?.vision_title || ''}
+                    onChange={(e) => updateHomepage('our_story.vision_title', e.target.value)}
+                    className="w-full bg-black border border-white/[0.05] rounded-xl px-5 py-3.5 text-white text-xs font-bold"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="block text-[9px] font-black text-gray-500 uppercase tracking-widest">Vision Text</label>
+                <textarea
+                  value={homepage.our_story?.vision_text || ''}
+                  onChange={(e) => updateHomepage('our_story.vision_text', e.target.value)}
+                  rows={4}
+                  className="w-full bg-black border border-white/[0.05] rounded-xl px-5 py-3.5 text-white text-xs font-medium leading-relaxed resize-none"
+                />
+              </div>
+
+              <div className="pt-4 border-t border-white/5">
+                <h4 className="text-[10px] font-black text-white uppercase tracking-widest mb-4">Vision Stats</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {(homepage.our_story?.stats || []).map((stat, sidx) => (
+                    <div key={sidx} className="bg-white/5 p-4 rounded-xl border border-white/5 space-y-3 relative">
+                      <div className="space-y-1">
+                        <label className="text-[7px] text-gray-400 font-bold uppercase">Stat Value</label>
+                        <input value={stat.value} onChange={(e) => {
+                          const nextStats = [...homepage.our_story.stats];
+                          nextStats[sidx] = { ...stat, value: e.target.value };
+                          updateHomepage('our_story.stats', nextStats);
+                        }} className="w-full bg-black/50 border border-white/10 rounded px-2 py-1.5 text-white text-[10px] font-bold" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[7px] text-gray-400 font-bold uppercase">Stat Label</label>
+                        <input value={stat.label} onChange={(e) => {
+                          const nextStats = [...homepage.our_story.stats];
+                          nextStats[sidx] = { ...stat, label: e.target.value };
+                          updateHomepage('our_story.stats', nextStats);
+                        }} className="w-full bg-black/50 border border-white/10 rounded px-2 py-1.5 text-white text-[10px] font-bold" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-white/5">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Story Hubs</h4>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const currentHubs = homepage.our_story?.hubs || [];
+                      updateHomepage('our_story.hubs', [
+                        ...currentHubs,
+                        { tag: 'New Store', name: 'Stella Hub', description: 'Store description...', address: '123 Road', phone: '+91 XXX', image: 'https://images.unsplash.com/photo-1554941068-a252680d25d9?auto=format&fit=crop&w=800&q=80' }
+                      ]);
+                    }}
+                    className="text-white text-[8px] font-black uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 hover:border-stella-gold transition-colors"
+                  >
+                    + Add Story Hub
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 gap-4">
+                  {(homepage.our_story?.hubs || []).map((hub, hidx) => (
+                    <div key={hidx} className="bg-white/5 p-4 rounded-xl border border-white/5 space-y-3 relative">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nextHubs = (homepage.our_story?.hubs || []).filter((_, i) => i !== hidx);
+                          updateHomepage('our_story.hubs', nextHubs);
+                        }}
+                        className="absolute top-4 right-4 text-[8px] font-black text-stella-red uppercase tracking-widest"
+                      >
+                        Delete
+                      </button>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[7px] text-gray-400 font-bold uppercase">Store Name</label>
+                          <input value={hub.name || ''} onChange={(e) => {
+                            const nextHubs = [...homepage.our_story.hubs];
+                            nextHubs[hidx] = { ...hub, name: e.target.value };
+                            updateHomepage('our_story.hubs', nextHubs);
+                          }} className="w-full bg-black/50 border border-white/10 rounded px-2 py-1.5 text-white text-[10px] font-bold" />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[7px] text-gray-400 font-bold uppercase">Tag</label>
+                          <input value={hub.tag || ''} onChange={(e) => {
+                            const nextHubs = [...homepage.our_story.hubs];
+                            nextHubs[hidx] = { ...hub, tag: e.target.value };
+                            updateHomepage('our_story.hubs', nextHubs);
+                          }} className="w-full bg-black/50 border border-white/10 rounded px-2 py-1.5 text-white text-[10px] font-bold" />
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[7px] text-gray-400 font-bold uppercase">Description</label>
+                        <textarea value={hub.description || ''} onChange={(e) => {
+                          const nextHubs = [...homepage.our_story.hubs];
+                          nextHubs[hidx] = { ...hub, description: e.target.value };
+                          updateHomepage('our_story.hubs', nextHubs);
+                        }} rows={2} className="w-full bg-black/50 border border-white/10 rounded px-2 py-1.5 text-white text-[10px] font-bold resize-none" />
+                      </div>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[7px] text-gray-400 font-bold uppercase">Address</label>
+                          <input value={hub.address || ''} onChange={(e) => {
+                            const nextHubs = [...homepage.our_story.hubs];
+                            nextHubs[hidx] = { ...hub, address: e.target.value };
+                            updateHomepage('our_story.hubs', nextHubs);
+                          }} className="w-full bg-black/50 border border-white/10 rounded px-2 py-1.5 text-white text-[10px] font-bold" />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[7px] text-gray-400 font-bold uppercase">Phone</label>
+                          <input value={hub.phone || ''} onChange={(e) => {
+                            const nextHubs = [...homepage.our_story.hubs];
+                            nextHubs[hidx] = { ...hub, phone: e.target.value };
+                            updateHomepage('our_story.hubs', nextHubs);
+                          }} className="w-full bg-black/50 border border-white/10 rounded px-2 py-1.5 text-white text-[10px] font-bold" />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[7px] text-gray-400 font-bold uppercase">Image URL</label>
+                          <input value={hub.image || ''} onChange={(e) => {
+                            const nextHubs = [...homepage.our_story.hubs];
+                            nextHubs[hidx] = { ...hub, image: e.target.value };
+                            updateHomepage('our_story.hubs', nextHubs);
+                          }} className="w-full bg-black/50 border border-white/10 rounded px-2 py-1.5 text-white text-[10px] font-bold font-mono" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
