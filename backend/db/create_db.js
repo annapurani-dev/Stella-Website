@@ -1,35 +1,49 @@
-const { Client } = require('pg');
 require('dotenv').config();
+const mysql = require('mysql2/promise');
 
-// Parse the connection string to replace the DB name
-const connectionString = process.env.DATABASE_URL;
-const baseConnectionString = connectionString.replace(/\/stella_mobiles$/, '/postgres');
+async function getAdminConnection() {
+  if (process.env.DATABASE_URL) {
+    const url = new URL(process.env.DATABASE_URL);
+    const database = url.pathname.replace(/^\//, '');
+    url.pathname = '/';
+    return {
+      connection: await mysql.createConnection({
+        host: url.hostname,
+        port: Number(url.port) || 3306,
+        user: decodeURIComponent(url.username),
+        password: decodeURIComponent(url.password),
+        multipleStatements: true,
+      }),
+      database,
+    };
+  }
 
-const client = new Client({
-  connectionString: baseConnectionString,
-});
+  return {
+    connection: await mysql.createConnection({
+      host: process.env.DB_HOST || 'localhost',
+      port: Number(process.env.DB_PORT) || 3306,
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || '',
+      multipleStatements: true,
+    }),
+    database: process.env.DB_NAME || 'stella_mobiles',
+  };
+}
 
 async function createDb() {
+  const { connection, database } = await getAdminConnection();
+
   try {
-    await client.connect();
-    console.log('🔗 Connected to postgres system database...');
-    
-    // Check if db exists
-    const res = await client.query("SELECT 1 FROM pg_database WHERE datname = 'stella_mobiles'");
-    if (res.rows.length === 0) {
-      console.log('🏗️ Creating database "stella_mobiles"...');
-      await client.query('CREATE DATABASE stella_mobiles');
-      console.log('✅ Database created.');
-    } else {
-      console.log('ℹ️ Database "stella_mobiles" already exists.');
-    }
-    
-    await client.end();
-    process.exit(0);
+    console.log('Connected to MariaDB...');
+    await connection.query(
+      `CREATE DATABASE IF NOT EXISTS \`${database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`,
+    );
+    console.log(`Database "${database}" is ready.`);
   } catch (err) {
-    console.error('❌ Failed to create database:', err);
-    await client.end();
+    console.error('Failed to create database:', err);
     process.exit(1);
+  } finally {
+    await connection.end();
   }
 }
 

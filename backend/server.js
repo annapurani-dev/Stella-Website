@@ -37,6 +37,32 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Stella Mobiles API is running' });
 });
 
+// Mock Manufacturer Page for Scraper Testing
+app.get('/api/mock-manufacturer-page', (req, res) => {
+  res.send(`
+    <html>
+      <head><title>Apple iPhone 17 Pro Max Manufacturer Specs</title></head>
+      <body>
+        <div id="aplus">
+          <h2>iPhone 17 Pro Max — Liquid Titanium. Beyond Pro.</h2>
+          <p>iPhone 17 Pro Max introduces the revolutionary liquid titanium alloy, making it lighter and significantly stronger than ever before. With incredibly thin bezels and an all-new seamless design, it redefines what a smartphone can look and feel like.</p>
+          <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=80" alt="iPhone 17 Pro Max Liquid Titanium Design" style="width:100%; border-radius: 12px; margin: 16px 0;" />
+          
+          <h3>A19 Pro Chip — Unmatched Apple Intelligence.</h3>
+          <p>The A19 Pro chip is built on a 2nm architecture, bringing groundbreaking speed and battery efficiency. Designed specifically to power the next generation of Apple Intelligence, it transforms how you game, work, and interact with the world.</p>
+          
+          <h3>A camera that sees beyond reality.</h3>
+          <p>Equipped with a massive 48MP triple-lens array, the iPhone 17 Pro Max brings DSLR-level photography to your pocket. New spatial video capturing is richer, and the low-light performance is unmatched in the industry.</p>
+          <img src="https://images.unsplash.com/photo-1695048065098-b80c55ff4ac2?auto=format&fit=crop&w=1200&q=80" alt="iPhone 17 Pro Max Camera System" style="width:100%; border-radius: 12px; margin: 16px 0;" />
+          
+          <h3>10x Optical Zoom — Getting closer than ever.</h3>
+          <p>The new periscope telephoto lens delivers an astounding 10x optical zoom. Capture wildlife, sports, and distant details with pristine clarity without taking a single step forward.</p>
+        </div>
+      </body>
+    </html>
+  `);
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

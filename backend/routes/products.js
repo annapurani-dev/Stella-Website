@@ -44,11 +44,26 @@ router.get('/categories', async (req, res) => {
     }
 });
 
+// GET deal of the day products
+router.get('/deals', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM products WHERE is_deal_of_day = 1');
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+
 // GET single product
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await db.query('SELECT * FROM products WHERE id = $1', [id]);
+        const result = await db.query(
+            'SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.id = $1', 
+            [id]
+        );
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Product not found' });
         }
@@ -58,15 +73,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// GET deal of the day products
-router.get('/deals', async (req, res) => {
-    try {
-        const result = await db.query('SELECT * FROM products WHERE is_deal_of_day = true');
-        res.json(result.rows);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+
 
 // POST new product (with image upload support)
 router.post('/', upload.array('images', 10), async (req, res) => {
@@ -102,8 +109,19 @@ router.post('/', upload.array('images', 10), async (req, res) => {
         }
 
         const result = await db.query(
-            'INSERT INTO products (name, description, price, stock_quantity, image_url, additional_images, specs, category_id, is_deal_of_day, deal_label) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
-            [name, description || '', price, stock_quantity || 0, image_url, additional_images, specs, category_id || null, is_deal_of_day === 'true' || is_deal_of_day === true, deal_label || '']
+            'INSERT INTO products (name, description, price, stock_quantity, image_url, additional_images, specs, category_id, is_deal_of_day, deal_label) VALUES ($1, $2, $3, $4, $5, CAST($6 AS JSON), CAST($7 AS JSON), $8, $9, $10) RETURNING *',
+            [
+                name,
+                description || '',
+                price,
+                stock_quantity || 0,
+                image_url,
+                JSON.stringify(additional_images || []),
+                JSON.stringify(specs || {}),
+                category_id || null,
+                is_deal_of_day === 'true' || is_deal_of_day === true,
+                deal_label || '',
+            ],
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -118,8 +136,20 @@ router.put('/:id', async (req, res) => {
     const { name, description, price, stock_quantity, image_url, additional_images, specs, category_id, is_deal_of_day, deal_label } = req.body;
     try {
         const result = await db.query(
-            'UPDATE products SET name = $1, description = $2, price = $3, stock_quantity = $4, image_url = $5, additional_images = $6, specs = $7, category_id = $8, is_deal_of_day = $9, deal_label = $10 WHERE id = $11 RETURNING *',
-            [name, description, price, stock_quantity, image_url, additional_images, specs, category_id, is_deal_of_day, deal_label, id]
+            'UPDATE products SET name = $1, description = $2, price = $3, stock_quantity = $4, image_url = $5, additional_images = CAST($6 AS JSON), specs = CAST($7 AS JSON), category_id = $8, is_deal_of_day = $9, deal_label = $10 WHERE id = $11 RETURNING *',
+            [
+                name,
+                description,
+                price,
+                stock_quantity,
+                image_url,
+                JSON.stringify(additional_images || []),
+                JSON.stringify(specs || {}),
+                category_id,
+                is_deal_of_day,
+                deal_label,
+                id,
+            ],
         );
         res.json(result.rows[0]);
     } catch (err) {

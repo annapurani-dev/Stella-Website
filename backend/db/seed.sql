@@ -68,7 +68,7 @@ INSERT INTO site_config (config_key, config_value) VALUES
                 "id": 1,
                 "title": "Unleash the Future",
                 "subtitle": "Experience the next generation of mobile performance and design.",
-                "image": "https://images.unsplash.com/photo-1616348436168-de43ad0db179?auto=format&fit=crop&w=1920&q=80"
+                "image": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1920&q=80"
             },
             {
                 "id": 2,
@@ -80,7 +80,7 @@ INSERT INTO site_config (config_key, config_value) VALUES
                 "id": 3,
                 "title": "Pure Audio Bliss",
                 "subtitle": "Crystal clear sound with advanced active noise cancellation technology.",
-                "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=1920&q=80"
+                "image": "https://images.unsplash.com/photo-1608156639585-b3a032ef9689?auto=format&fit=crop&w=1920&q=80"
             }
         ],
         "buttonText": "Discover Elite"

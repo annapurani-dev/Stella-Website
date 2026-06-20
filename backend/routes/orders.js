@@ -68,8 +68,8 @@ router.get('/user/:userId', async (req, res) => {
                     a.street_address, a.city, a.state, a.postal_code,
                     b.name as branch_name, b.address as branch_address,
                     COALESCE(
-                        (SELECT json_agg(
-                            json_build_object(
+                        (SELECT JSON_ARRAYAGG(
+                            JSON_OBJECT(
                                 'id', oi.id,
                                 'product_id', p.id,
                                 'name', p.name,
@@ -81,7 +81,7 @@ router.get('/user/:userId', async (req, res) => {
                         FROM order_items oi
                         JOIN products p ON oi.product_id = p.id
                         WHERE oi.order_id = o.id),
-                        '[]'::json
+                        JSON_ARRAY()
                     ) as items
              FROM orders o 
              LEFT JOIN addresses a ON o.address_id = a.id
@@ -90,7 +90,11 @@ router.get('/user/:userId', async (req, res) => {
              ORDER BY o.created_at DESC`,
             [userId]
         );
-        res.json(result.rows);
+        const orders = result.rows.map((row) => ({
+            ...row,
+            items: typeof row.items === 'string' ? JSON.parse(row.items) : row.items || [],
+        }));
+        res.json(orders);
     } catch (err) {
         console.error('Error fetching user orders:', err);
         res.status(500).json({ error: err.message });
@@ -102,16 +106,22 @@ router.get('/', async (req, res) => {
     try {
         const result = await db.query(`
             SELECT o.*, u.name as user_name, u.phone_number as user_phone,
-                   (SELECT json_agg(DISTINCT c.name)
-                    FROM order_items oi
-                    JOIN products p ON oi.product_id = p.id
-                    JOIN categories c ON p.category_id = c.id
-                    WHERE oi.order_id = o.id) as categories
+                   (SELECT JSON_ARRAYAGG(category_name) FROM (
+                        SELECT DISTINCT c.name AS category_name
+                        FROM order_items oi
+                        JOIN products p ON oi.product_id = p.id
+                        JOIN categories c ON p.category_id = c.id
+                        WHERE oi.order_id = o.id
+                    ) AS cats) as categories
             FROM orders o
             LEFT JOIN users u ON o.user_id = u.id
             ORDER BY o.created_at DESC
         `);
-        res.json(result.rows);
+        const orders = result.rows.map((row) => ({
+            ...row,
+            categories: typeof row.categories === 'string' ? JSON.parse(row.categories) : row.categories,
+        }));
+        res.json(orders);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -160,7 +170,9 @@ router.get('/:id/invoice', async (req, res) => {
         const result = await db.query(`
             SELECT o.*, u.name as user_name, u.email as user_email, u.phone_number as user_phone,
                    b.name as branch_name, a.street_address, a.city, a.state, a.postal_code,
-                   (SELECT json_agg(json_build_object('id', p.id, 'name', p.name, 'price', oi.price_at_purchase, 'quantity', oi.quantity))
+                   (SELECT JSON_ARRAYAGG(
+                        JSON_OBJECT('id', p.id, 'name', p.name, 'price', oi.price_at_purchase, 'quantity', oi.quantity)
+                    )
                     FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = o.id) as items
             FROM orders o
             LEFT JOIN users u ON o.user_id = u.id
@@ -173,7 +185,12 @@ router.get('/:id/invoice', async (req, res) => {
             return res.status(404).json({ error: 'Order not found' });
         }
         
-        const order = result.rows[0];
+        const order = {
+            ...result.rows[0],
+            items: typeof result.rows[0].items === 'string'
+                ? JSON.parse(result.rows[0].items)
+                : result.rows[0].items || [],
+        };
 
         // Generate PDF
         const doc = new PDFDocument({ margin: 50 });

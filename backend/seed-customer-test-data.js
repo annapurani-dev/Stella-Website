@@ -6,17 +6,15 @@
  * Run: node seed-customer-test-data.js
  */
 
-const { Pool } = require('pg');
+const db = require('./db/index');
 require('dotenv').config();
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-const CUSTOMER_ID = 2; // "Stella" customer user
+const CUSTOMER_ID = 2; // John Doe in complete-seed.sql
 
 async function seed() {
-    const client = await pool.connect();
+    const client = await db.pool.connect();
     try {
-        await client.query('BEGIN');
+        await client.query('START TRANSACTION');
         console.log('🌱 Seeding customer test data for user ID:', CUSTOMER_ID);
 
         // ─────────────────────────────────────────
@@ -26,16 +24,25 @@ async function seed() {
         await client.query('DELETE FROM addresses WHERE user_id = $1', [CUSTOMER_ID]);
         console.log('  ✓ Cleared old addresses');
 
-        const addressRes = await client.query(
+        const addr1 = await client.query(
             `INSERT INTO addresses (user_id, street_address, city, state, postal_code, is_default, landmark, address_name)
-             VALUES
-               ($1, '12, Lotus Apartments, 3rd Cross Street, Adyar', 'Chennai', 'Tamil Nadu', '600020', true,  'Near Adyar Bus Depot', 'Priya Sharma'),
-               ($1, '45B, Brigade Road, Koramangala 5th Block',       'Bengaluru', 'Karnataka', '560095', false, 'Opposite Forum Mall',  'Rohan Mehta'),
-               ($1, '8, Anand Nagar, Sector 14',                      'Mumbai',    'Maharashtra', '400061', false, 'Near Andheri Railway Station', 'Ananya Pillai')
+             VALUES ($1, '12, Lotus Apartments, 3rd Cross Street, Adyar', 'Chennai', 'Tamil Nadu', '600020', true, 'Near Adyar Bus Depot', 'Priya Sharma')
              RETURNING id`,
             [CUSTOMER_ID]
         );
-        const [addr1Id, addr2Id] = addressRes.rows.map(r => r.id);
+        const addr2 = await client.query(
+            `INSERT INTO addresses (user_id, street_address, city, state, postal_code, is_default, landmark, address_name)
+             VALUES ($1, '45B, Brigade Road, Koramangala 5th Block', 'Bengaluru', 'Karnataka', '560095', false, 'Opposite Forum Mall', 'Rohan Mehta')
+             RETURNING id`,
+            [CUSTOMER_ID]
+        );
+        await client.query(
+            `INSERT INTO addresses (user_id, street_address, city, state, postal_code, is_default, landmark, address_name)
+             VALUES ($1, '8, Anand Nagar, Sector 14', 'Mumbai', 'Maharashtra', '400061', false, 'Near Andheri Railway Station', 'Ananya Pillai')`,
+            [CUSTOMER_ID]
+        );
+        const addr1Id = addr1.rows[0].id;
+        const addr2Id = addr2.rows[0].id;
         console.log('  ✓ Inserted 3 addresses');
 
         // ─────────────────────────────────────────
@@ -57,7 +64,7 @@ async function seed() {
         // Order 1: "pending" — just placed
         const o1 = await client.query(
             `INSERT INTO orders (user_id, status, total_amount, delivery_type, address_id, payment_method, payment_status, created_at)
-             VALUES ($1, 'pending', 134900.00, 'delivery', $2, 'razorpay', 'paid', NOW() - INTERVAL '2 hours')
+             VALUES ($1, 'pending', 134900.00, 'delivery', $2, 'razorpay', 'paid', NOW() - INTERVAL 2 HOUR)
              RETURNING id`,
             [CUSTOMER_ID, addr1Id]
         );
@@ -70,7 +77,7 @@ async function seed() {
         // Order 2: "processing" — being packed
         const o2 = await client.query(
             `INSERT INTO orders (user_id, status, total_amount, delivery_type, address_id, payment_method, payment_status, created_at)
-             VALUES ($1, 'processing', 142998.00, 'delivery', $2, 'upi_qr', 'paid', NOW() - INTERVAL '1 day')
+             VALUES ($1, 'processing', 142998.00, 'delivery', $2, 'upi_qr', 'paid', NOW() - INTERVAL 1 DAY)
              RETURNING id`,
             [CUSTOMER_ID, addr2Id]
         );
@@ -87,7 +94,7 @@ async function seed() {
         // Order 3: "shipped" — on the way
         const o3 = await client.query(
             `INSERT INTO orders (user_id, status, total_amount, delivery_type, address_id, payment_method, payment_status, created_at)
-             VALUES ($1, 'shipped', 59900.00, 'delivery', $2, 'razorpay', 'paid', NOW() - INTERVAL '3 days')
+             VALUES ($1, 'shipped', 59900.00, 'delivery', $2, 'razorpay', 'paid', NOW() - INTERVAL 3 DAY)
              RETURNING id`,
             [CUSTOMER_ID, addr1Id]
         );
@@ -105,7 +112,7 @@ async function seed() {
         // Order 4: "delivered" — store pickup
         const o4 = await client.query(
             `INSERT INTO orders (user_id, status, total_amount, delivery_type, branch_id, payment_method, payment_status, created_at)
-             VALUES ($1, 'delivered', 151999.00, 'pickup', 1, 'pay_at_store', 'paid', NOW() - INTERVAL '8 days')
+             VALUES ($1, 'delivered', 151999.00, 'pickup', 1, 'pay_at_store', 'paid', NOW() - INTERVAL 8 DAY)
              RETURNING id`,
             [CUSTOMER_ID]
         );
@@ -122,7 +129,7 @@ async function seed() {
         // Order 5: "delivered" — home delivery
         const o5 = await client.query(
             `INSERT INTO orders (user_id, status, total_amount, delivery_type, address_id, payment_method, payment_status, created_at)
-             VALUES ($1, 'delivered', 5900.00, 'delivery', $2, 'razorpay', 'paid', NOW() - INTERVAL '15 days')
+             VALUES ($1, 'delivered', 5900.00, 'delivery', $2, 'razorpay', 'paid', NOW() - INTERVAL 15 DAY)
              RETURNING id`,
             [CUSTOMER_ID, addr1Id]
         );
@@ -135,7 +142,7 @@ async function seed() {
         // Order 6: "cancelled"
         const o6 = await client.query(
             `INSERT INTO orders (user_id, status, total_amount, delivery_type, address_id, payment_method, payment_status, created_at)
-             VALUES ($1, 'cancelled', 129999.00, 'delivery', $2, 'razorpay', 'pending', NOW() - INTERVAL '20 days')
+             VALUES ($1, 'cancelled', 129999.00, 'delivery', $2, 'razorpay', 'pending', NOW() - INTERVAL 20 DAY)
              RETURNING id`,
             [CUSTOMER_ID, addr2Id]
         );
@@ -157,7 +164,7 @@ async function seed() {
         process.exit(1);
     } finally {
         client.release();
-        pool.end();
+        await db.end();
     }
 }
 

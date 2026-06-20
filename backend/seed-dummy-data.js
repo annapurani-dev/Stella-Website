@@ -19,7 +19,7 @@ async function seed() {
             
             await client.query(
                 `INSERT INTO orders (user_id, total_amount, delivery_type, payment_method, status, created_at) 
-                 VALUES ($1, $2, $3, $4, $5, NOW() - INTERVAL '${daysAgo} days')`,
+                 VALUES ($1, $2, $3, $4, $5, DATE_SUB(NOW(), INTERVAL ${daysAgo} DAY))`,
                 [userId, totalAmount, deliveryType, 'card', 'completed']
             );
         }

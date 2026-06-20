@@ -7,39 +7,39 @@ router.get('/', async (req, res) => {
         const client = await db.pool.connect();
         try {
             const filter = req.query.filter || 'week';
-            let dateInterval = '7 days';
+            let dateInterval = '7 DAY';
             let groupBy = 'DATE(created_at)';
-            let dateFormat = "YYYY-MM-DD";
-            
+
             if (filter === 'month') {
-                dateInterval = '30 days';
+                dateInterval = '30 DAY';
                 groupBy = 'DATE(created_at)';
             } else if (filter === 'year') {
-                dateInterval = '1 year';
-                groupBy = "TO_CHAR(created_at, 'YYYY-MM')"; // Group by month
+                dateInterval = '1 YEAR';
+                groupBy = "DATE_FORMAT(created_at, '%Y-%m')";
             }
 
-            // Get Total Revenue
-            const revenueResult = await client.query(`SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE status != 'cancelled' AND created_at >= NOW() - INTERVAL '${dateInterval}'`);
+            const revenueResult = await client.query(
+                `SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE status != 'cancelled' AND created_at >= DATE_SUB(NOW(), INTERVAL ${dateInterval})`,
+            );
             const totalRevenue = parseFloat(revenueResult.rows[0].total) || 0;
 
-            // Get Total Orders
-            const ordersResult = await client.query(`SELECT COUNT(*) as count FROM orders WHERE created_at >= NOW() - INTERVAL '${dateInterval}'`);
-            const totalOrders = parseInt(ordersResult.rows[0].count) || 0;
+            const ordersResult = await client.query(
+                `SELECT COUNT(*) as count FROM orders WHERE created_at >= DATE_SUB(NOW(), INTERVAL ${dateInterval})`,
+            );
+            const totalOrders = parseInt(ordersResult.rows[0].count, 10) || 0;
 
-            // Get New Customers (distinct users in the interval)
-            const customersResult = await client.query(`SELECT COUNT(DISTINCT user_id) as count FROM orders WHERE created_at >= NOW() - INTERVAL '${dateInterval}'`);
-            const newCustomers = parseInt(customersResult.rows[0].count) || 0;
+            const customersResult = await client.query(
+                `SELECT COUNT(DISTINCT user_id) as count FROM orders WHERE created_at >= DATE_SUB(NOW(), INTERVAL ${dateInterval})`,
+            );
+            const newCustomers = parseInt(customersResult.rows[0].count, 10) || 0;
 
-            // Get Low Stock Products (stock <= 5)
-            const stockResult = await client.query("SELECT COUNT(*) as count FROM products WHERE stock_quantity <= 5");
-            const lowStock = parseInt(stockResult.rows[0].count) || 0;
+            const stockResult = await client.query('SELECT COUNT(*) as count FROM products WHERE stock_quantity <= 5');
+            const lowStock = parseInt(stockResult.rows[0].count, 10) || 0;
 
-            // Get Chart Revenue
             const dailyRevenueResult = await client.query(`
-                SELECT ${groupBy} as date, COALESCE(SUM(total_amount), 0) as revenue 
-                FROM orders 
-                WHERE status != 'cancelled' AND created_at >= NOW() - INTERVAL '${dateInterval}'
+                SELECT ${groupBy} as date, COALESCE(SUM(total_amount), 0) as revenue
+                FROM orders
+                WHERE status != 'cancelled' AND created_at >= DATE_SUB(NOW(), INTERVAL ${dateInterval})
                 GROUP BY ${groupBy}
                 ORDER BY date ASC
             `);
