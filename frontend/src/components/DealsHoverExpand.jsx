@@ -83,17 +83,14 @@ export default function DealsHoverExpand({ deals = [], onAddToCart, onToggleWish
   const goPrev = useCallback(() => goTo(activeIndex - 1, -1), [activeIndex, goTo]);
 
   const updateIndicator = useCallback(() => {
-    const picker = pickerRef.current;
     const pick = pickRefs.current[activeIndex];
-    if (!picker || !pick) return;
+    if (!pick) return;
 
-    const pickerRect = picker.getBoundingClientRect();
-    const pickRect = pick.getBoundingClientRect();
     setIndicator({
-      top: pickRect.top - pickerRect.top + picker.scrollTop,
-      left: pickRect.left - pickerRect.left + picker.scrollLeft,
-      width: pickRect.width,
-      height: pickRect.height,
+      top: pick.offsetTop,
+      left: pick.offsetLeft,
+      width: pick.offsetWidth,
+      height: pick.offsetHeight,
     });
   }, [activeIndex]);
 
@@ -108,11 +105,9 @@ export default function DealsHoverExpand({ deals = [], onAddToCart, onToggleWish
 
     const onResize = () => updateIndicator();
     window.addEventListener('resize', onResize);
-    picker.addEventListener('scroll', updateIndicator, { passive: true });
 
     return () => {
       window.removeEventListener('resize', onResize);
-      picker.removeEventListener('scroll', updateIndicator);
     };
   }, [updateIndicator, deals.length]);
 
@@ -315,25 +310,24 @@ export default function DealsHoverExpand({ deals = [], onAddToCart, onToggleWish
       </div>
 
       <div className="deals-spotlight__picker-wrap">
-        {indicator.width > 0 && (
-          <div
-            className="deals-spotlight__picker-indicator"
-            style={{
-              top: indicator.top,
-              left: indicator.left,
-              width: indicator.width,
-              height: indicator.height,
-            }}
-            aria-hidden="true"
-          />
-        )}
-
         <div
           ref={pickerRef}
-          className="deals-spotlight__picker scrollbar-none"
+          className="deals-spotlight__picker scrollbar-none relative"
           role="tablist"
           aria-label="Choose a deal"
         >
+          {indicator.width > 0 && (
+            <div
+              className="deals-spotlight__picker-indicator"
+              style={{
+                top: indicator.top,
+                left: indicator.left,
+                width: indicator.width,
+                height: indicator.height,
+              }}
+              aria-hidden="true"
+            />
+          )}
           {deals.map((deal, index) => {
             const isActive = index === activeIndex;
             const dealSavings = savingsPercent(deal.price, deal.oldPrice);

@@ -15,8 +15,7 @@ import AdminDashboardPage from '@/pages/AdminDashboardPage';
 import LoginPage from '@/pages/LoginPage';
 import Reveal3D from '@/components/Reveal3D';
 import CleanLogo from '@/components/CleanLogo';
-
-const AboutPage = lazy(() => import('@/pages/AboutPage'));
+import LegalPage from '@/pages/LegalPage';
 
 const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -28,15 +27,29 @@ const defaultNavLinks = [
 
 const footerSections = [
   {
-    title: 'Support',
+    title: 'Legal & Policies',
     links: [
-      { name: 'Order Tracking', path: '/account?tab=tracking' },
-      { name: 'My Account', path: '/account' },
+      { name: 'Privacy Policy', path: '/privacy' },
+      { name: 'Terms of Service', path: '/terms' },
+      { name: 'Product Warranty', path: '/warranty' },
     ],
   },
   {
-    title: 'Company',
-    links: [{ name: 'Our Story', path: '/#our-story' }],
+    title: 'Customer Support',
+    links: [
+      { name: 'My Account', path: '/account' },
+      { name: 'Track Your Order', path: '/account?tab=tracking' },
+      { name: 'Order History', path: '/account?tab=orders' },
+      { name: 'Wishlist', path: '/account?tab=wishlist' },
+    ],
+  },
+  {
+    title: 'Stella Mobiles',
+    links: [
+      { name: 'Our Story', path: '/#our-story' },
+      { name: 'Franchise Program', path: '/#franchise' },
+      { name: 'Our Branches', path: '/#branches' },
+    ],
   },
 ];
 
@@ -240,7 +253,9 @@ export default function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/order-success" element={<OrderSuccessPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-            <Route path="/about" element={<AboutPage />} />
+            <Route path="/privacy" element={<LegalPage type="privacy" />} />
+            <Route path="/terms" element={<LegalPage type="terms" />} />
+            <Route path="/warranty" element={<LegalPage type="warranty" />} />
           </Routes>
         </Suspense>
       </main>

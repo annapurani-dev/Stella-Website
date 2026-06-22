@@ -619,13 +619,33 @@ export default function HomePage() {
                 <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white">Franchise Program</h2>
                 <p className="text-[8px] md:text-[9px] text-gray-500 font-black uppercase tracking-[0.4em] mt-1">Stella Partnership Programme</p>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowFranchiseModal(false)}
-                className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all text-xl font-black cursor-pointer"
-              >
-                ✕
-              </button>
+              <div className="flex items-center gap-4">
+                {/* Brochure Button Container */}
+                <div className="relative group hidden sm:block">
+                  <a
+                    href="/Business_Brochure.pdf"
+                    download="Business_Brochure.pdf"
+                    className="stella-button bg-stella-red text-white px-2.5 py-1.5 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-red-700 flex items-center justify-center gap-2 shadow-lg shadow-stella-red/25 transition-all"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Brochure
+                  </a>
+                  {/* Tooltip */}
+                  <div className="absolute top-full right-0 mt-4 w-56 p-3 bg-stella-black/95 backdrop-blur-xl border border-white/10 rounded-xl opacity-0 -translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50 shadow-2xl">
+                    <p className="text-[10px] text-gray-300 leading-relaxed text-center font-medium">Download our comprehensive franchise guide detailing the business model and investment.</p>
+                    <div className="absolute bottom-full right-8 -mb-1 border-4 border-transparent border-b-white/10" />
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowFranchiseModal(false)}
+                  className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all text-xl font-black cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
             {/* Scrolling Content Container */}
@@ -675,33 +695,14 @@ export default function HomePage() {
               {/* Footer Actions */}
               <div className="flex flex-col sm:flex-row flex-wrap gap-6 pt-6 mt-8 border-t border-white/[0.05]">
                 
-                {/* Brochure Button Container */}
-                <div className="relative group">
-                  <a
-                    href="/Business_Brochure.pdf"
-                    download="Business_Brochure.pdf"
-                    className="stella-button bg-stella-red text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-700 flex items-center justify-center gap-3 shadow-2xl shadow-stella-red/25 transition-all w-full sm:w-auto"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Download Full Brochure
-                  </a>
-                  {/* Tooltip */}
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-64 p-4 bg-stella-black/95 backdrop-blur-xl border border-white/10 rounded-2xl opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50 shadow-2xl">
-                    <p className="text-[11px] text-gray-300 leading-relaxed text-center font-medium">Download our comprehensive franchise guide detailing the business model, investment, and complete benefits of partnering with Stella.</p>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-white/10" />
-                  </div>
-                </div>
-
                 {/* Software Button Container */}
                 <div className="relative group">
                   <a
                     href="/Stella_Billing_Software.exe"
                     download="Stella_Billing_Software.exe"
-                    className="stella-button bg-stella-gold text-black px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-yellow-500 flex items-center justify-center gap-3 shadow-2xl shadow-stella-gold/25 transition-all w-full sm:w-auto"
+                    className="stella-button bg-stella-gold text-black px-2.5 py-1.5 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-yellow-500 flex items-center justify-center gap-2 shadow-lg shadow-stella-gold/25 transition-all w-full sm:w-auto"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
                     Download Billing Software
