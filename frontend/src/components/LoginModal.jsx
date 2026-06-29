@@ -32,9 +32,9 @@ export default function LoginModal({ onClose }) {
   const handleLoginSubmit = async () => {
     if (!password) return;
     try {
-      await authStore.login(phoneNumber, password);
+      const loggedInUser = await authStore.login(phoneNumber, password);
       onClose();
-      if (authStore.user?.role === 'admin') navigate('/admin/dashboard');
+      if (loggedInUser?.role === 'admin') navigate('/admin/dashboard');
       else navigate('/account');
     } catch (err) {
       alert(err.message);

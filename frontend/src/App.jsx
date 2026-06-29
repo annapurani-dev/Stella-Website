@@ -107,8 +107,12 @@ export default function App() {
   }, []);
 
   const handleAccountClick = () => {
-    if (user) navigate('/account');
-    else toggleLoginModal(true);
+    if (user) {
+      if (user.role === 'admin') navigate('/admin/dashboard');
+      else navigate('/account');
+    } else {
+      toggleLoginModal(true);
+    }
   };
 
   const goToCheckout = () => {
