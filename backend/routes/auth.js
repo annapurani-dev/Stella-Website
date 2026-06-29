@@ -160,11 +160,11 @@ router.post('/reset-password', async (req, res) => {
 
         // 3. Update User
         const result = await db.query(
-            'UPDATE users SET password_hash = $1 WHERE phone_number = $2 RETURNING *',
+            'UPDATE users SET password_hash = $1 WHERE phone_number = $2',
             [passwordHash, phoneNumber]
         );
 
-        if (result.rows.length === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({ error: 'User not found' });
         }
 
