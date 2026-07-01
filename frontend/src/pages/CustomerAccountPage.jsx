@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useToastStore } from '@/stores/toastStore';
+import { MapPin, FileText, Package, X } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -560,7 +561,7 @@ export default function CustomerAccountPage() {
                     </div>
                   ) : addresses.length === 0 ? (
                     <div className="stella-card p-20 text-center flex flex-col items-center border-dashed border-white/10 bg-stella-charcoal/20">
-                      <div className="text-6xl mb-6 opacity-10">📍</div>
+                      <div className="flex justify-center mb-6 opacity-20"><MapPin size={60} /></div>
                       <h3 className="text-gray-400 font-black uppercase tracking-[0.4em] text-xs">No Shipping Details Configured</h3>
                       <p className="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Add your first shipping details to enable direct shipping</p>
                       <button type="button" onClick={openAddAddressModal} className="mt-6 text-stella-red font-black uppercase tracking-[0.3em] text-[10px] border-b border-stella-red/20 pb-1 hover:border-stella-red transition-all cursor-pointer">Add Shipping Details</button>
@@ -739,7 +740,7 @@ export default function CustomerAccountPage() {
                               )}
                               <div className="pt-4 mt-2">
                                 <button type="button" onClick={() => downloadInvoice(order.id)} className="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] py-3 rounded-xl transition-all border border-white/5">
-                                  <span className="text-sm">📄</span> Download Invoice
+                                  <span className="text-sm"><FileText size={16} /></span> Download Invoice
                                 </button>
                               </div>
                             </div>
@@ -767,7 +768,7 @@ export default function CustomerAccountPage() {
                   </div>
                 ) : completedOrders.length === 0 ? (
                   <div className="stella-card p-24 text-center flex flex-col items-center bg-stella-charcoal/20 border-white/[0.04]">
-                    <div className="text-5xl mb-6 opacity-20">📦</div>
+                    <div className="flex justify-center mb-6 opacity-20"><Package size={48} /></div>
                     <h3 className="text-gray-400 font-black uppercase tracking-[0.4em] text-xs">No Past Orders Found</h3>
                     <p className="text-[10px] text-gray-600 mt-2 leading-relaxed">Your completed or cancelled orders will appear here</p>
                     <button type="button" onClick={() => navigate('/products')} className="mt-8 text-stella-red font-black uppercase tracking-[0.3em] text-[10px] border-b border-stella-red/20 pb-1 hover:border-stella-red transition-all cursor-pointer">Browse Products</button>
@@ -785,7 +786,7 @@ export default function CustomerAccountPage() {
                         >
                           <div className="flex items-center gap-6 w-full md:w-auto mb-6 md:mb-0">
                             <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-xl transition-all duration-300 group-hover:scale-105 group-hover:border-stella-gold/30 flex-shrink-0">
-                              {order.status === 'delivered' ? '📦' : '❌'}
+                              {order.status === 'delivered' ? <Package size={24} /> : <X size={24} />}
                             </div>
                             <div>
                               <div className="flex items-center gap-3 mb-1.5">
@@ -861,7 +862,7 @@ export default function CustomerAccountPage() {
                               </div>
                               <div className="col-span-1 md:col-span-2 mt-2">
                                 <button type="button" onClick={() => downloadInvoice(order.id)} className="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] py-4 rounded-2xl transition-all border border-white/5">
-                                  <span className="text-sm">📄</span> Download Invoice
+                                  <span className="text-sm"><FileText size={16} /></span> Download Invoice
                                 </button>
                               </div>
                             </div>

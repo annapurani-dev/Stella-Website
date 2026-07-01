@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useToastStore } from '@/stores/toastStore';
+import { ClipboardList, FileText, Folder } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -36,12 +37,12 @@ const DEFAULT_HOMEPAGE = {
       { tag: 'Tech Hub', name: 'Stella Velachery', address: 'Bypass Road, Velachery, Chennai - 400042', phone: '+91 44 2929 XXXX', hours: '10 AM - 9 PM' },
     ],
     benefits: [
-      { icon: '🏪', title: 'Zero Franchise Fee', desc: 'No upfront cost. Pure equity partnership model with revenue sharing.' },
-      { icon: '📦', title: 'Elite Supply Chain', desc: 'Direct access to Stella premier inventory — latest flagships on day 1.' },
-      { icon: '📊', title: '200% Growth YOY', desc: 'Fastest growing mobile retail brand in South India with proven metrics.' },
-      { icon: '🤝', title: 'Full Brand Support', desc: 'Training, marketing, store design, operations — all backed by Stella central.' },
-      { icon: '💳', title: '0% UPI Processing', desc: 'Our proprietary payment gateway means zero transaction fees for partners.' },
-      { icon: '🔒', title: 'Exclusive Territory', desc: 'Protected geographic zones — no internal competition between partners.' },
+      { title: 'Zero Franchise Fee', desc: 'No upfront cost. Pure equity partnership model with revenue sharing.' },
+      { title: 'Elite Supply Chain', desc: 'Direct access to Stella premier inventory — latest flagships on day 1.' },
+      { title: '200% Growth YOY', desc: 'Fastest growing mobile retail brand in South India with proven metrics.' },
+      { title: 'Full Brand Support', desc: 'Training, marketing, store design, operations — all backed by Stella central.' },
+      { title: '0% UPI Processing', desc: 'Our proprietary payment gateway means zero transaction fees for partners.' },
+      { title: 'Exclusive Territory', desc: 'Protected geographic zones — no internal competition between partners.' },
     ],
   },
   testimonials: {
@@ -65,6 +66,7 @@ const DEFAULT_HOMEPAGE = {
     { name: 'Smartphones', path: '/products?category=Smartphones' },
     { name: 'Accessories', path: '/products?category=Accessories' },
     { name: 'Our Story', path: '/#our-story' },
+    { name: 'Franchise', path: '/#franchise' },
   ],
   our_story: {
     hero_title: 'Our Story',
@@ -914,7 +916,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-12 animate-fade-up">
             <div className="flex justify-between items-center glass p-8 rounded-[2.5rem]">
               <div className="flex items-center space-x-6">
-                <div className="w-12 h-12 rounded-2xl bg-stella-red/20 flex items-center justify-center text-stella-red text-xl">📋</div>
+                <div className="w-12 h-12 rounded-2xl bg-stella-red/20 flex items-center justify-center text-stella-red text-xl"><ClipboardList /></div>
                 <h2 className="text-3xl font-black uppercase tracking-tighter text-white">Order Logs</h2>
               </div>
               <div className="flex items-center space-x-4 flex-wrap">
@@ -994,7 +996,7 @@ export default function AdminDashboardPage() {
                         </div>
                       </td>
                       <td className="px-12 py-10 text-center">
-                        <button type="button" onClick={() => downloadInvoice(order.id)} className="w-10 h-10 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/10 transition-colors flex items-center justify-center text-white" title="Download Invoice">📄</button>
+                        <button type="button" onClick={() => downloadInvoice(order.id)} className="w-10 h-10 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/10 transition-colors flex items-center justify-center text-white" title="Download Invoice"><FileText size={16} /></button>
                       </td>
                     </tr>
                   ))}
@@ -1258,7 +1260,7 @@ export default function AdminDashboardPage() {
                     const currentBenefits = homepage.franchise?.benefits || [];
                     updateHomepage('franchise.benefits', [
                       ...currentBenefits,
-                      { icon: '⭐', title: 'New Benefit Title', desc: 'Detailed benefit description explaining why partners should choose Stella.' }
+                      { title: 'New Benefit Title', desc: 'Detailed benefit description explaining why partners should choose Stella.' }
                     ]);
                   }}
                   className="text-white text-[8px] font-black uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 hover:border-stella-gold transition-colors"
@@ -1292,7 +1294,7 @@ export default function AdminDashboardPage() {
                             updateHomepage('franchise.benefits', nextBenefits);
                           }}
                           className="w-full bg-white/5 border border-white/5 text-white rounded-lg py-2 px-3 text-[10px] font-bold text-center"
-                          placeholder="🏪"
+                          placeholder="Icon Name"
                         />
                       </div>
                       <div className="space-y-1 col-span-3">
@@ -1597,7 +1599,7 @@ export default function AdminDashboardPage() {
           <div className="absolute inset-0 bg-stella-black/80 backdrop-blur-sm" onClick={() => setShowCategoryModal(false)} />
           <div className="relative bg-stella-charcoal border border-white/10 rounded-[2rem] w-full max-w-lg p-10 shadow-2xl animate-fade-up">
             <div className="flex items-center space-x-4 mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-stella-red/10 flex items-center justify-center border border-stella-red/20 text-stella-red font-bold text-xl">📁</div>
+              <div className="w-12 h-12 rounded-2xl bg-stella-red/10 flex items-center justify-center border border-stella-red/20 text-stella-red font-bold text-xl"><Folder /></div>
               <h2 className="text-2xl font-black uppercase tracking-widest text-white">{editingCategory ? 'Edit Category' : 'Add Category'}</h2>
             </div>
             <form onSubmit={(e) => { e.preventDefault(); saveCategory(); }} className="space-y-6">

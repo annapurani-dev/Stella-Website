@@ -20,7 +20,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, EffectCards, Autoplay, Pagination, Navigation } from 'swiper/modules';
-import { ChevronLeftIcon, ChevronRightIcon, MapPinIcon } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon, MapPinIcon, Phone } from 'lucide-react';
 
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
@@ -101,19 +101,19 @@ const defaultCol3Reviews = [
 ];
 
 const franchiseBentoItems = [
-  { icon: '🏪', title: 'Zero Franchise Fee', desc: 'No upfront cost. Pure equity partnership.' },
-  { icon: '📦', title: 'Elite Supply Chain', desc: "Direct access to Stella's premium inventory." },
-  { icon: '📊', title: '200% Growth YOY', desc: 'Fastest growing mobile retail brand in South India.' },
-  { icon: '🤝', title: 'Full Brand Support', desc: 'Training, marketing & operations backed by Stella.' },
+  { title: 'Zero Franchise Fee', desc: 'No upfront cost. Pure equity partnership.' },
+  { title: 'Elite Supply Chain', desc: "Direct access to Stella's premium inventory." },
+  { title: '200% Growth YOY', desc: 'Fastest growing mobile retail brand in South India.' },
+  { title: 'Full Brand Support', desc: 'Training, marketing & operations backed by Stella.' },
 ];
 
 const franchiseModalBenefits = [
-  { icon: '📱', title: 'Comprehensive Mobile Solutions', desc: 'Stella Hit Tech offers not only mobile sales but also top-tier after-sales services, ensuring a seamless experience.' },
-  { icon: '💻', title: 'Tech Expertise', desc: 'With a strong foundation in software development and customized applications, we understand diverse business needs.' },
-  { icon: '🚀', title: 'Innovation-Driven', desc: 'We stay ahead of industry trends, constantly evolving with the latest technologies like AI and cloud solutions.' },
-  { icon: '❤️', title: 'Customer-Centric Approach', desc: 'Customer satisfaction is at the heart of what we do. We provide personalized services to meet client needs.' },
-  { icon: '👥', title: 'Skilled Team', desc: 'Our passionate professionals bring expertise in both mobile technology and software development.' },
-  { icon: '📈', title: 'Affordable & Scalable', desc: 'We offer scalable solutions that are both cost-effective and tailored to your unique requirements.' },
+  { title: 'Comprehensive Mobile Solutions', desc: 'Stella Hit Tech offers not only mobile sales but also top-tier after-sales services, ensuring a seamless experience.' },
+  { title: 'Tech Expertise', desc: 'With a strong foundation in software development and customized applications, we understand diverse business needs.' },
+  { title: 'Innovation-Driven', desc: 'We stay ahead of industry trends, constantly evolving with the latest technologies like AI and cloud solutions.' },
+  { title: 'Customer-Centric Approach', desc: 'Customer satisfaction is at the heart of what we do. We provide personalized services to meet client needs.' },
+  { title: 'Skilled Team', desc: 'Our passionate professionals bring expertise in both mobile technology and software development.' },
+  { title: 'Affordable & Scalable', desc: 'We offer scalable solutions that are both cost-effective and tailored to your unique requirements.' },
 ];
 
 const aboutUsCards = [
@@ -574,7 +574,7 @@ export default function HomePage() {
       )}
 
       {/* Franchise Section (CTA Only) */}
-      <section className="relative py-16 flex flex-col items-center justify-center overflow-hidden w-full border-t border-white/5 bg-gradient-to-b from-stella-black to-[#0a0a0c]">
+      <section id="franchise" className="scroll-mt-28 relative py-16 flex flex-col items-center justify-center overflow-hidden w-full border-t border-white/5 bg-gradient-to-b from-stella-black to-[#0a0a0c]">
          <div className="absolute top-1/4 right-0 w-[450px] h-[450px] bg-stella-red/5 rounded-full blur-[120px] pointer-events-none" />
          <div className="absolute bottom-1/4 left-0 w-[450px] h-[450px] bg-stella-gold/3 rounded-full blur-[120px] pointer-events-none" />
 
@@ -586,7 +586,8 @@ export default function HomePage() {
                     {franchiseTitleParts.slice(2).join(' ')}
                   </span>
                </h2>
-               <p className="text-gray-400 max-w-lg mx-auto text-sm">Join our growing network of successful franchise partners with pure equity.</p>
+               <p className="text-gray-400 max-w-lg mx-auto text-sm leading-relaxed mb-8">Join our growing network of successful franchise partners with pure equity. Stella provides an elite supply chain with direct access to premium inventory, backed by comprehensive training, marketing, and operations support. Experience the fastest growing mobile retail brand in South India with absolutely zero upfront franchise fees.</p>
+
                <button
                   type="button"
                   onClick={() => setShowFranchiseModal(true)}
@@ -620,22 +621,24 @@ export default function HomePage() {
                 <p className="text-[8px] md:text-[9px] text-gray-500 font-black uppercase tracking-[0.4em] mt-1">Stella Partnership Programme</p>
               </div>
               <div className="flex items-center gap-4">
-                {/* Brochure Button Container */}
-                <div className="relative group hidden sm:block">
+                {/* Brochure Download */}
+                <div className="relative group hidden sm:flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="text-white font-black uppercase tracking-wider text-[11px]">Franchise Brochure</p>
+                  </div>
                   <a
                     href="/Business_Brochure.pdf"
                     download="Business_Brochure.pdf"
-                    className="stella-button bg-stella-red text-white px-2.5 py-1.5 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-red-700 flex items-center justify-center gap-2 shadow-lg shadow-stella-red/25 transition-all"
+                    className="w-10 h-10 rounded-full bg-stella-red/10 border border-stella-red/20 text-stella-red flex items-center justify-center hover:bg-stella-red hover:text-white transition-all duration-300 shadow-lg shadow-stella-red/0 hover:shadow-stella-red/30 cursor-pointer"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Download Brochure
                   </a>
                   {/* Tooltip */}
-                  <div className="absolute top-full right-0 mt-4 w-56 p-3 bg-stella-black/95 backdrop-blur-xl border border-white/10 rounded-xl opacity-0 -translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50 shadow-2xl">
-                    <p className="text-[10px] text-gray-300 leading-relaxed text-center font-medium">Download our comprehensive franchise guide detailing the business model and investment.</p>
-                    <div className="absolute bottom-full right-8 -mb-1 border-4 border-transparent border-b-white/10" />
+                  <div className="absolute top-full right-0 mt-4 w-64 p-4 bg-stella-black/95 backdrop-blur-xl border border-white/10 rounded-2xl opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50 shadow-2xl">
+                    <p className="text-[11px] text-gray-300 leading-relaxed text-center font-medium">Download our comprehensive franchise guide detailing the business model and investment.</p>
+                    <div className="absolute bottom-full right-4 -mb-1 border-4 border-transparent border-b-white/10" />
                   </div>
                 </div>
                 <button
@@ -690,31 +693,29 @@ export default function HomePage() {
                 <div className="w-full">
                   <FranchiseHubsGallery hubs={hubs.filter(h => h.tag.includes('Franchise'))} />
                 </div>
-              </div>
-
               {/* Footer Actions */}
-              <div className="flex flex-col sm:flex-row flex-wrap gap-6 pt-6 mt-8 border-t border-white/[0.05]">
-                
-                {/* Software Button Container */}
-                <div className="relative group">
+              <div className="flex flex-col sm:flex-row gap-4 pt-6 mt-8 border-t border-white/[0.05]">
+                {/* Software Download */}
+                <div className="flex items-center gap-3 group relative w-max">
                   <a
                     href="/Stella_Billing_Software.exe"
                     download="Stella_Billing_Software.exe"
-                    className="stella-button bg-stella-gold text-black px-2.5 py-1.5 rounded-xl font-black uppercase tracking-widest text-[9px] hover:bg-yellow-500 flex items-center justify-center gap-2 shadow-lg shadow-stella-gold/25 transition-all w-full sm:w-auto"
+                    className="w-10 h-10 rounded-full bg-stella-gold/10 border border-stella-gold/20 text-stella-gold flex items-center justify-center hover:bg-stella-gold hover:text-black transition-all duration-300 shadow-lg shadow-stella-gold/0 hover:shadow-stella-gold/30 cursor-pointer"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Download Billing Software
                   </a>
+                  <div className="text-left">
+                    <p className="text-white font-black uppercase tracking-wider text-[11px]">Billing Software</p>
+                  </div>
                   {/* Tooltip */}
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-64 p-4 bg-stella-black/95 backdrop-blur-xl border border-white/10 rounded-2xl opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50 shadow-2xl">
+                  <div className="absolute bottom-full left-0 mb-4 w-64 p-4 bg-stella-black/95 backdrop-blur-xl border border-white/10 rounded-2xl opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50 shadow-2xl">
                     <p className="text-[11px] text-gray-300 leading-relaxed text-center font-medium">Get our proprietary Stella Point-of-Sale and Billing software, custom-built to streamline your store's inventory and daily operations.</p>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-white/10" />
+                    <div className="absolute top-full left-4 -mt-1 border-4 border-transparent border-t-white/10" />
                   </div>
                 </div>
-
-              </div>
+              </div>      </div>
             </div>
             </div>
             </motion.div>
@@ -726,7 +727,7 @@ export default function HomePage() {
 
 
       {/* Our Story Section */}
-      <section id="our-story" className="border-t border-white/5 bg-[#08080a]">
+      <section id="our-story" className="scroll-mt-28 border-t border-white/5 bg-[#08080a]">
         <div className="max-w-7xl mx-auto px-6 py-16 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           {/* Left Column: Text content */}
           <div className="lg:col-span-6 space-y-8 text-left">
@@ -788,7 +789,7 @@ export default function HomePage() {
       <section id="branches" className="max-w-7xl mx-auto px-6 py-16 w-full">
          <Reveal3D variant="up">
            <div className="text-center mb-16">
-              <KineticTitle className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white mb-4">
+              <KineticTitle className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-white mb-4">
                 Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-stella-gold to-yellow-300">Network</span>
               </KineticTitle>
               <p className="text-gray-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
@@ -799,18 +800,18 @@ export default function HomePage() {
 
          {/* Head Office */}
          <Reveal3D variant="zoom" delay={100}>
-           <div className="mb-12 glass p-8 md:p-12 rounded-[2.5rem] border border-stella-gold/30 bg-gradient-to-br from-stella-gold/5 to-transparent relative overflow-hidden group shadow-2xl shadow-stella-gold/5">
+           <div className="mb-8 glass p-5 md:p-6 rounded-2xl border border-stella-gold/30 bg-gradient-to-br from-stella-gold/5 to-transparent relative overflow-hidden group shadow-xl shadow-stella-gold/5">
               <div className="absolute top-0 right-0 w-96 h-96 bg-stella-gold/10 rounded-full blur-[80px] pointer-events-none transition-all duration-700 group-hover:bg-stella-gold/20" />
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center relative z-10 gap-8">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center relative z-10 gap-4">
                   <div>
-                     <span className="inline-block bg-stella-gold/20 text-stella-gold text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 rounded-lg mb-4">Head Office</span>
-                     <h3 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">Stella Hi Tech Pvt Ltd</h3>
-                     <p className="text-gray-300 max-w-lg leading-relaxed text-sm">102/5a/1a, Polepettai, Melur, Thoothukudi, Tamil Nadu - 628 002</p>
+                     <span className="inline-block bg-stella-gold/20 text-stella-gold text-[8px] font-black uppercase tracking-[0.3em] px-2 py-1 rounded mb-2">Head Office</span>
+                     <h3 className="text-lg md:text-xl font-black text-white uppercase tracking-tight mb-2">Stella Hi Tech Pvt Ltd</h3>
+                     <p className="text-gray-400 max-w-lg leading-relaxed text-[10px] md:text-xs">102/5a/1a, Polepettai, Melur, Thoothukudi, Tamil Nadu - 628 002</p>
                   </div>
-                     <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                     <a href="tel:+919095510510" className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-6 py-4 rounded-xl transition-all group-hover:border-white/20">
-                        <span className="text-xl">📞</span>
-                        <span className="text-white font-bold tracking-wider text-sm">+91 9095510510</span>
+                     <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
+                     <a href="tel:+919095510510" className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-lg transition-all group-hover:border-white/20">
+                        <Phone className="w-4 h-4 text-white" />
+                        <span className="text-white font-bold tracking-wider text-[10px]">+91 9095510510</span>
                      </a>
                   </div>
               </div>
@@ -819,23 +820,23 @@ export default function HomePage() {
 
          {/* Interactive Branches UI */}
          <Reveal3D variant="up" delay={200}>
-           <div className="flex flex-col lg:flex-row gap-8 min-h-[500px]">
+           <div className="flex flex-col lg:flex-row gap-4 min-h-[300px]">
                {/* Left side: Interactive List */}
-               <div className="w-full lg:w-1/3 flex flex-col gap-3">
+               <div className="w-full lg:w-1/3 flex flex-col gap-2">
                   {hubs.filter(hub => !hub.tag.includes('Franchise')).map((hub, idx) => {
                      const isActive = activeBranchIdx === idx;
                      return (
                          <div 
                            key={idx} 
                            onClick={() => setActiveBranchIdx(idx)}
-                           className={`cursor-pointer group flex items-center justify-between p-5 rounded-2xl border transition-all duration-300 ${isActive ? 'bg-stella-gold/10 border-stella-gold shadow-[0_0_20px_rgba(255,215,0,0.15)] scale-[1.02]' : 'bg-white/[0.02] border-white/5 hover:border-white/20 hover:bg-white/[0.05]'}`}
+                           className={`cursor-pointer group flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ${isActive ? 'bg-stella-gold/10 border-stella-gold shadow-[0_0_10px_rgba(255,215,0,0.1)] scale-[1.01]' : 'bg-white/[0.02] border-white/5 hover:border-white/20 hover:bg-white/[0.05]'}`}
                          >
                             <div>
-                               <h4 className={`text-lg font-black uppercase tracking-tight transition-colors duration-300 ${isActive ? 'text-stella-gold' : 'text-gray-300 group-hover:text-white'}`}>{hub.name}</h4>
-                               <p className="text-gray-500 text-xs mt-1 uppercase tracking-widest">{hub.address.split(',')[0]}</p>
+                               <h4 className={`text-sm md:text-base font-black uppercase tracking-tight transition-colors duration-300 ${isActive ? 'text-stella-gold' : 'text-gray-300 group-hover:text-white'}`}>{hub.name}</h4>
+                               <p className="text-gray-500 text-[9px] md:text-[10px] mt-0.5 uppercase tracking-widest">{hub.address.split(',')[0]}</p>
                             </div>
                             <div className={`transition-transform duration-300 ${isActive ? 'translate-x-1 opacity-100' : 'opacity-0 -translate-x-2 group-hover:opacity-50'}`}>
-                               <ChevronRightIcon className="w-5 h-5 text-stella-gold" />
+                               <ChevronRightIcon className="w-4 h-4 text-stella-gold" />
                             </div>
                          </div>
                      );
@@ -843,26 +844,26 @@ export default function HomePage() {
                </div>
 
                {/* Right side: Detailed Feature Card */}
-               <div className="w-full lg:w-2/3 relative h-full min-h-[400px]">
+               <div className="w-full lg:w-2/3 relative h-full min-h-[250px]">
                   {hubs.filter(hub => !hub.tag.includes('Franchise')).map((hub, idx) => {
                      const isActive = activeBranchIdx === idx;
                      if (!isActive) return null;
                      
                      return (
-                        <div key={`detail-${idx}`} className="absolute inset-0 glass p-8 md:p-12 rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent flex flex-col justify-between animate-in fade-in zoom-in duration-500">
+                        <div key={`detail-${idx}`} className="absolute inset-0 glass p-5 md:p-6 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent flex flex-col justify-between animate-in fade-in zoom-in duration-500">
                             <div>
-                               <h3 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-6 leading-tight">{hub.name}</h3>
-                               <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-xl mb-8 font-medium">{hub.address}</p>
+                               <h3 className="text-lg md:text-xl font-black text-white uppercase tracking-tight mb-2 leading-tight">{hub.name}</h3>
+                               <p className="text-gray-400 text-[10px] md:text-xs leading-relaxed max-w-xl mb-4 font-medium">{hub.address}</p>
                             </div>
                             
-                            <div className="mt-8 pt-8 border-t border-white/10">
-                               <p className="text-white/40 text-[10px] uppercase tracking-[0.2em] font-black mb-2">Branch Manager</p>
-                               <p className="text-gray-200 text-lg font-bold tracking-wide">{hub.manager || 'N/A'}</p>
+                            <div className="mt-4 pt-4 border-t border-white/10">
+                               <p className="text-white/40 text-[8px] md:text-[9px] uppercase tracking-[0.2em] font-black mb-1">Branch Manager</p>
+                               <p className="text-gray-200 text-xs md:text-sm font-bold tracking-wide">{hub.manager || 'N/A'}</p>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-4 mt-10">
-                               <a href={`tel:${hub.phone.replace(/\s+/g,'')}`} className="flex items-center gap-3 bg-white hover:bg-gray-200 text-black px-6 py-3.5 rounded-xl transition-all font-black uppercase tracking-wider text-sm shadow-xl shadow-white/10">
-                                  <span>📞</span> Call Now
+                            <div className="flex flex-wrap items-center gap-3 mt-6">
+                               <a href={`tel:${hub.phone.replace(/\s+/g,'')}`} className="flex items-center gap-2 bg-white hover:bg-gray-200 text-black px-4 py-2.5 rounded-lg transition-all font-black uppercase tracking-wider text-[10px] shadow-lg shadow-white/10">
+                                  <Phone className="w-3.5 h-3.5 md:w-4 md:h-4" /> Call Now
                                </a>
                             </div>
                         </div>

@@ -23,6 +23,7 @@ const defaultNavLinks = [
   { name: 'Smartphones', path: '/products?category=Smartphones' },
   { name: 'Accessories', path: '/products?category=Accessories' },
   { name: 'Our Story', path: '/#our-story' },
+  { name: 'Franchise', path: '/#franchise' },
 ];
 
 const footerSections = [
@@ -59,7 +60,10 @@ function ScrollManager() {
     if (hash) {
       const timer = setTimeout(() => {
         const el = document.querySelector(hash);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.scrollY - 112;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
       }, 100);
       return () => clearTimeout(timer);
     }
@@ -73,6 +77,7 @@ function getNavLinkPath(name) {
   const norm = name.trim().toLowerCase();
   if (norm === 'home') return '/';
   if (norm === 'our story' || norm === 'about' || norm === 'about us') return '/#our-story';
+  if (norm === 'franchise') return '/#franchise';
   return `/products?category=${encodeURIComponent(name.trim())}`;
 }
 
@@ -100,6 +105,7 @@ export default function App() {
             links.push({ name: cat.name, path: `/products?category=${encodeURIComponent(cat.name)}` });
           });
           links.push({ name: 'Our Story', path: '/#our-story' });
+          links.push({ name: 'Franchise', path: '/#franchise' });
           setNavLinks(links);
         }
       })
@@ -125,7 +131,11 @@ export default function App() {
       e.preventDefault();
       const id = path.slice(2);
       if (location.pathname === '/') {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const el = document.getElementById(id);
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.scrollY - 112;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
       } else {
         navigate(path);
       }

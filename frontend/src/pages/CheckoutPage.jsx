@@ -4,6 +4,8 @@ import { useCartStore } from '@/stores/cartStore';
 import { useToastStore } from '@/stores/toastStore';
 import { useAuthStore } from '@/stores/authStore';
 
+import { Truck, Store, Smartphone, Lock } from 'lucide-react';
+
 const API = import.meta.env.VITE_API_BASE_URL;
 
 export default function CheckoutPage() {
@@ -156,7 +158,7 @@ export default function CheckoutPage() {
                     }`}
                   >
                     <div className={`text-2xl transition-transform ${shippingMethod === method ? 'scale-110' : ''}`}>
-                      {method === 'delivery' ? '🚚' : '🏪'}
+                      {method === 'delivery' ? <Truck /> : <Store />}
                     </div>
                     <h3 className={`font-black uppercase tracking-widest text-xs transition-colors ${shippingMethod === method ? 'text-white' : 'text-gray-400'}`}>
                       {method === 'delivery' ? 'Home delivery' : 'Shop pickup'}
@@ -349,7 +351,7 @@ export default function CheckoutPage() {
               <button onClick={() => { setShowRazorpayModal(false); addToast('Payment cancelled', 'error'); }} className="text-gray-400 hover:text-gray-700 text-xl font-bold">&times;</button>
             </div>
             <div className="w-20 h-20 bg-gray-100 rounded-full mb-4 flex items-center justify-center overflow-hidden border border-gray-200">
-              <span className="text-2xl">📱</span>
+              <Smartphone className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="text-gray-800 font-bold text-xl mb-1">Stella Mobiles</h3>
             <p className="text-gray-500 text-sm mb-8 font-medium">Order Payment</p>
@@ -365,7 +367,7 @@ export default function CheckoutPage() {
                 Cancel Payment
               </button>
             </div>
-            <p className="text-[10px] text-gray-400 mt-6 flex items-center"><span className="mr-1">🔒</span> Secured by Razorpay</p>
+            <p className="text-[10px] text-gray-400 mt-6 flex items-center"><Lock className="w-3 h-3 mr-1" /> Secured by Razorpay</p>
           </div>
         </div>
       )}
