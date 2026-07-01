@@ -622,9 +622,10 @@ export default function HomePage() {
               </div>
               <div className="flex items-center gap-4">
                 {/* Brochure Download */}
-                <div className="relative group hidden sm:flex items-center gap-3">
+                <div className="hidden sm:flex items-center gap-3">
                   <div className="text-right">
                     <p className="text-white font-black uppercase tracking-wider text-[11px]">Franchise Brochure</p>
+                    <p className="text-gray-400 text-[8px] mt-0.5 leading-tight uppercase tracking-wider">Business model & investment guide</p>
                   </div>
                   <a
                     href="/Business_Brochure.pdf"
@@ -635,11 +636,6 @@ export default function HomePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </a>
-                  {/* Tooltip */}
-                  <div className="absolute top-full right-0 mt-4 w-64 p-4 bg-stella-black/95 backdrop-blur-xl border border-white/10 rounded-2xl opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50 shadow-2xl">
-                    <p className="text-[11px] text-gray-300 leading-relaxed text-center font-medium">Download our comprehensive franchise guide detailing the business model and investment.</p>
-                    <div className="absolute bottom-full right-4 -mb-1 border-4 border-transparent border-b-white/10" />
-                  </div>
                 </div>
                 <button
                   type="button"
@@ -696,7 +692,7 @@ export default function HomePage() {
               {/* Footer Actions */}
               <div className="flex flex-col sm:flex-row gap-4 pt-6 mt-8 border-t border-white/[0.05]">
                 {/* Software Download */}
-                <div className="flex items-center gap-3 group relative w-max">
+                <div className="flex items-center gap-3">
                   <a
                     href="/Stella_Billing_Software.exe"
                     download="Stella_Billing_Software.exe"
@@ -708,11 +704,7 @@ export default function HomePage() {
                   </a>
                   <div className="text-left">
                     <p className="text-white font-black uppercase tracking-wider text-[11px]">Billing Software</p>
-                  </div>
-                  {/* Tooltip */}
-                  <div className="absolute bottom-full left-0 mb-4 w-64 p-4 bg-stella-black/95 backdrop-blur-xl border border-white/10 rounded-2xl opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50 shadow-2xl">
-                    <p className="text-[11px] text-gray-300 leading-relaxed text-center font-medium">Get our proprietary Stella Point-of-Sale and Billing software, custom-built to streamline your store's inventory and daily operations.</p>
-                    <div className="absolute top-full left-4 -mt-1 border-4 border-transparent border-t-white/10" />
+                    <p className="text-gray-400 text-[8px] mt-0.5 leading-tight uppercase tracking-wider">Custom POS & inventory</p>
                   </div>
                 </div>
               </div>      </div>
